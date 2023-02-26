@@ -21,11 +21,11 @@ public:
 		printf("Вызван деструктор класса Point\n");
 	}
 
-	virtual int getX() const {
+	int getX() const {
 		return x;
 	};
 
-	virtual int getY() const {
+	int getY() const {
 		return y;
 	};
 
