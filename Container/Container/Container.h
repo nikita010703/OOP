@@ -5,11 +5,11 @@ class Container { //Контейнер на основе двусвязного списка
 private:
 	class ListNode { //Класс, отвечающий за узлы списка
 	public:
-		T* object;
+		T object;
 		ListNode* prev;
 		ListNode* next;
 
-		ListNode(T* newElem) {
+		ListNode(T& newElem) {
 			object = newElem;
 			prev = next = nullptr;
 		}
@@ -63,7 +63,7 @@ public:
 		delete curNode;
 	}
 
-	void pushBack(T* elem) { //Добавление элемента в конец контейнера
+	void pushBack(T& elem) { //Добавление элемента в конец контейнера
 		if (curSize > 0) {
 			ListNode* newNode = new ListNode(elem);
 			tail->next = newNode;
@@ -78,7 +78,7 @@ public:
 		curPos = curSize++;
 	}
 
-	void pushFront(T* elem) { //Добавление элемента в начало контейнера
+	void pushFront(T& elem) { //Добавление элемента в начало контейнера
 		if (curSize > 0) {
 			ListNode* newNode = new ListNode(elem);
 			head->prev = newNode;
@@ -94,7 +94,7 @@ public:
 		curSize++;
 	}
 
-	void insert(T* elem) { //Добавление элемента в текущюю позицию "итератора"
+	void insert(T& elem) { //Добавление элемента в текущюю позицию "итератора"
 		ListNode* curNode = getNodeAt(curPos);
 		if (curNode == tail)
 			pushBack(elem);
@@ -112,7 +112,7 @@ public:
 		}
 	}
 
-	void insert(T* elem, int pos) { //Добавление элемента по индексу
+	void insert(T& elem, int pos) { //Добавление элемента по индексу
 		curPos = pos;
 		insert(elem);
 	}
@@ -159,20 +159,17 @@ public:
 			ListNode* curNode = getNodeAt(curPos);
 			if (curNode == tail) {
 				tail = tail->prev;
-				tail->next = nullptr;
-				//delete tail->next;
+				tail->next = nullptr; 
 			}
 			else if (curNode == head) {
 				head = head->next;
 				head->prev = nullptr;
-				//delete head->prev;
 			}
 			else {
 				ListNode* nextNode = curNode->next;
 				ListNode* prevNode = curNode->prev;
 				prevNode->next = nextNode;
 				nextNode->prev = prevNode;
-				//delete curNode;
 			}
 			curSize--;
 			if (curPos == curSize)
@@ -186,12 +183,9 @@ public:
 		remove();
 	}
 
-	T* getObject() { //Получение указателя на элемент контейнера
+	T& getObject() { //Получение указателя на элемент контейнера
 		ListNode* curNode = getNodeAt(curPos);
-		if (curNode == nullptr)
-			return nullptr;
-		else 
-			return curNode->object;
+		return curNode->object;
 	}
 
 	void next() { //Переход к следующему узлу

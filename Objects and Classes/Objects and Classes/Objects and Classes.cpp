@@ -24,16 +24,16 @@ public:
 
 	int getX() const {
 		return x;
-	};
+	}
 
 	int getY() const {
 		return y;
-	};
+	}
 
 	void set(int _x = 0, int _y = 0) {
 		x = _x;
 		y = _y;
-	};
+	}
 };
 
 class SizedPoint : public Point {
@@ -57,7 +57,7 @@ public:
 		printf("SizedPoint(const Point& pnt, int radius)\n");
 	}
 
-	SizedPoint(const SizedPoint& sPnt) : radius(sPnt.radius), Point(sPnt.x, sPnt.y) {
+	SizedPoint(const SizedPoint& sPnt) : radius(sPnt.radius), Point(sPnt) {
 		printf("SizedPoint(const SizedPoint& sPnt)\n");
 	}
 
@@ -68,21 +68,21 @@ public:
 
 	int getRadius() const {
 		return radius;
-	};
+	}
 
 	void set(int _x = 0, int _y = 0, int _radius = 1) {
 		Point::set(_x, _y);
 		radius = _radius;
-	};
+	}
 
 	void set(const Point& pnt) {
 		x = pnt.getX();
 		y = pnt.getY();
-	};
+	}
 
 	void setRadius(int _radius) {
 		radius = _radius;
-	};
+	}
 };
 
 class Section {
