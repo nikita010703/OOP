@@ -1,9 +1,9 @@
 #pragma once
 
 template <class T>
-class Container {
+class Container { //Контейнер на основе двусвязного списка
 private:
-	class ListNode {
+	class ListNode { //Класс, отвечающий за узлы списка
 	public:
 		T* object;
 		ListNode* prev;
@@ -12,19 +12,19 @@ private:
 		ListNode(T* newElem) {
 			object = newElem;
 			prev = next = nullptr;
-		};
+		}
 
 		~ListNode() {
 			prev = next = nullptr;
 			delete object;
-		};
+		}
 	};
 
 	int curSize, curPos;
 	ListNode* head;
 	ListNode* tail;
-
-	ListNode* getNodeAt(int pos) {
+	 
+	ListNode* getNodeAt(int pos) { // Метод, возвращающий узел по индексу
 		if (pos >= curSize - 1)
 			return tail;
 		else if (pos <= 0)
@@ -38,14 +38,14 @@ private:
 			}
 			return curNode;
 		}
-	};
+	}
 
 public:
 	Container() {
 		head = nullptr;
 		tail = nullptr;
 		curSize = curPos = 0;
-	};
+	}
 
 	~Container() {
 		if (isEmpty()) {
@@ -61,9 +61,9 @@ public:
 		}
 		head = tail = nullptr;
 		delete curNode;
-	};
+	}
 
-	void pushBack(T* elem) {
+	void pushBack(T* elem) { //Добавление элемента в конец контейнера
 		if (curSize > 0) {
 			ListNode* newNode = new ListNode(elem);
 			tail->next = newNode;
@@ -76,9 +76,9 @@ public:
 			tail->prev = head;
 		}
 		curPos = curSize++;
-	};
+	}
 
-	void pushFront(T* elem) {
+	void pushFront(T* elem) { //Добавление элемента в начало контейнера
 		if (curSize > 0) {
 			ListNode* newNode = new ListNode(elem);
 			head->prev = newNode;
@@ -90,10 +90,11 @@ public:
 			head->next = tail;
 			tail->prev = head;
 		}
-		curPos = curSize++;
-	};
+		curPos = 0;
+		curSize++;
+	}
 
-	void insert(T* elem) {
+	void insert(T* elem) { //Добавление элемента в текущюю позицию "итератора"
 		ListNode* curNode = getNodeAt(curPos);
 		if (curNode == tail)
 			pushBack(elem);
@@ -106,44 +107,47 @@ public:
 			insertedNode->prev = curNode;
 			insertedNode->next = nextNode;
 			nextNode->prev = insertedNode;
+			curPos++;
+			curSize++;
 		}
-	};
+	}
 
-	void remove(int pos) {
+	void insert(T* elem, int pos) { //Добавление элемента по индексу
+		curPos = pos;
+		insert(elem);
+	}
+
+	void popFront() { //Удаление элемента из начала контейнера
 		if (!isEmpty()) {
-			if (size() == 1) {
-				delete head;
-				head = tail = nullptr;
-				curSize--;
-				return;
-			}
-
-			ListNode* curNode = getNodeAt(pos);
-			if (curNode == tail) {
-				tail = tail->prev;
-				tail->next = nullptr;
-				//delete tail->next;
-			}
-			else if (curNode == head) {
+			if (curSize != 1) {
 				head = head->next;
+				delete head->prev;
 				head->prev = nullptr;
-				//delete head->prev;
 			}
-			else {
-				ListNode* nextNode = curNode->next;
-				ListNode* prevNode = curNode->prev;
-				prevNode->next = nextNode;
-				nextNode->prev = prevNode;
-				//delete curNode;
-			}
+			else
+				delete head;
+
+			curPos = 0;
 			curSize--;
-			if (curPos == curSize)
-				curPos--;
-			delete curNode;
 		}
 	};
 
-	void remove() {
+	void popBack() { //Удаление элемента из конца контейнера
+		if (!isEmpty()) {
+			if (curSize != 1) {
+				tail = tail->prev;
+				delete tail->next;
+				tail->next = nullptr;
+			}
+			else
+				delete tail;
+
+			curSize--;
+			curPos = curSize - 1;
+		}
+	}
+
+	void remove() { //Удаление элемента по текущей позиции "итератора"
 		if (!isEmpty()) {
 			if (size() == 1) {
 				delete head;
@@ -175,43 +179,54 @@ public:
 				curPos--;
 			delete curNode;
 		}
-	};
+	}
 
-	T* getObject() {
+	void remove(int pos) { //Удаление элемента по индексу
+		curPos = pos;
+		remove();
+	}
+
+	T* getObject() { //Получение указателя на элемент контейнера
 		ListNode* curNode = getNodeAt(curPos);
-		return curNode->object;
-	};
+		if (curNode == nullptr)
+			return nullptr;
+		else 
+			return curNode->object;
+	}
 
-	void next() {
-		curPos = curPos == curSize - 1 ? curPos : curPos + 1;
-	};
+	void next() { //Переход к следующему узлу
+		curPos += curPos == curSize ? 0 : 1;
+	}
 
-	void previous() {
-		curPos = curPos == 0 ? curPos : curPos - 1;
-	};
+	void previous() { //Переход к предыдущему узлу
+		curPos -= curPos == -1 ? 0 : 1;
+	}
 
-	int size() {
-		return curSize;
-	};
-
-	bool isEmpty() {
-		return curSize == 0;
-	};
-
-	int currentPosition() {
+	int currentPosition() const { //Возврат текущей позиции "итератора" в списке
 		return curPos;
-	};
+	}
 
-	void print() {
-		if (isEmpty()) {
-			std::cout << "Empty\n";
-			return;
-		}
-		ListNode* curNode = head;
-		while (curNode != nullptr) {
-			std::cout << *curNode->object << ' ';
-			curNode = curNode->next;
-		}
-		std::cout << '\n';
+	void begin() { //Перемещение "итератора" к началу списка
+		curPos = 0;
+	}
+
+	bool beginOfContainer() const { //Находится ли "итератор" в начале списка
+		return curPos == -1;
+	}
+
+	void end() { //Перемещение "итератора" к концу списка
+		curPos = curSize - 1;
+	}
+
+	bool endOfContainer() const { //Находится ли "итератор" в конце списка
+		return curPos == curSize;
+	}
+
+	int size() const { //Размер контейнера
+		return curSize;
+	}
+
+	bool isEmpty() const { //Пуст ли контейнер
+		return curSize == 0;
 	}
 };
