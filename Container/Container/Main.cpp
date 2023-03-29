@@ -41,7 +41,7 @@ int main() {
 	std::cin >> numOfCommands;
 
 	// Создание контейнера
-	Container<Animal> c;
+	Container<Animal*> c;
 
 	// Фиксация времени на момент начала тестов
 	clock_t start = clock();
