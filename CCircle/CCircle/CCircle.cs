@@ -46,7 +46,7 @@ namespace CCircle {
         public void Paint(Graphics g) {
             g.FillEllipse(Brushes.SkyBlue, x - rad, y - rad, 2 * rad, 2 * rad);
 
-            Pen p = new Pen(Color.SkyBlue);
+            Pen p = new Pen(Color.LightBlue);
             p.Width = 2;
             if (isSelected)
                 p.Color = Color.DeepSkyBlue;
