@@ -24,6 +24,7 @@ namespace MVC {
                 if (a > 100) a = 100;
                 if (a > b) b = a;
                 if (a > c) c = a;
+                Update();
             }
         }
         public int B {
@@ -34,6 +35,7 @@ namespace MVC {
                 b = value;
                 if (b < a) b = a;
                 if (b > c) b = c;
+                Update();
             }
         }
         public int C {
@@ -46,6 +48,7 @@ namespace MVC {
                 if (c > 100) c = 100;
                 if (b > c) b = c;
                 if (a > c) a = c;
+                Update();
             }
         }
 
@@ -61,7 +64,7 @@ namespace MVC {
             Properties.Settings.Default.c = c;
             observers.Invoke(this, null);
         }
-
+        /*
         public void ValueChanged(object sender) {
             if (sender is TextBox) {
                 TextBox send = (TextBox)sender;
@@ -96,5 +99,21 @@ namespace MVC {
             }
             Update();
         }
+        
+        public void Sync(int num, Variable var) {
+            switch (var) {
+                case Variable.A: A = num; break;
+                case Variable.B: B = num; break;
+                case Variable.C: C = num; break;
+            }
+            Update();
+        }
+
+        public enum Variable {
+            A = 0,
+            B = 1,
+            C = 2
+        }
+        */
     }
 }

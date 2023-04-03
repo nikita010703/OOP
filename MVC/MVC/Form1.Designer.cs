@@ -61,6 +61,7 @@
             this.txtBxC.Size = new System.Drawing.Size(100, 20);
             this.txtBxC.TabIndex = 5;
             this.txtBxC.KeyDown += new System.Windows.Forms.KeyEventHandler(this.txtBx_KeyDown);
+            this.txtBxC.Leave += new System.EventHandler(this.txtBx_Leave);
             // 
             // numUDC
             // 
@@ -98,6 +99,7 @@
             this.txtBxB.Size = new System.Drawing.Size(100, 20);
             this.txtBxB.TabIndex = 11;
             this.txtBxB.KeyDown += new System.Windows.Forms.KeyEventHandler(this.txtBx_KeyDown);
+            this.txtBxB.Leave += new System.EventHandler(this.txtBx_Leave);
             // 
             // trckBrB
             // 
@@ -125,6 +127,7 @@
             this.txtBxA.Size = new System.Drawing.Size(100, 20);
             this.txtBxA.TabIndex = 14;
             this.txtBxA.KeyDown += new System.Windows.Forms.KeyEventHandler(this.txtBx_KeyDown);
+            this.txtBxA.Leave += new System.EventHandler(this.txtBx_Leave);
             // 
             // trckBrA
             // 

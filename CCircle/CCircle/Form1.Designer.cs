@@ -132,7 +132,7 @@
             this.MaximumSize = new System.Drawing.Size(820, 500);
             this.MinimumSize = new System.Drawing.Size(820, 500);
             this.Name = "FormCircles";
-            this.Text = "Form1";
+            this.Text = "Circles";
             this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.FormCircles_KeyDown);
             this.KeyUp += new System.Windows.Forms.KeyEventHandler(this.FormCircles_KeyUp);
             ((System.ComponentModel.ISupportInitialize)(this.newCircleRadius)).EndInit();

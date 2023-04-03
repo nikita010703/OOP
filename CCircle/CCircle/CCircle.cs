@@ -28,7 +28,7 @@ namespace CCircle {
         }
 
         public bool isLiesOn(float _x, float _y) {
-            return Math.Sqrt(Math.Pow(x - _x, 2) + Math.Pow(y - _y, 2)) < rad;
+            return Math.Pow(x - _x, 2) + Math.Pow(y - _y, 2) < Math.Pow(rad, 2);
         }
 
         public void Select() {

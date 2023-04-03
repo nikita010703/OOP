@@ -31,7 +31,6 @@ namespace CCircle {
                 selectedCircles--;
             }
             else if (circle.isSelect() && selectedCircles == 1) {
-
             }
             else if (!circle.isSelect()) {
                 circle.Select();
