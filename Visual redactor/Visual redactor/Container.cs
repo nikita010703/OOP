@@ -1,0 +1,220 @@
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Container {
+    public interface Iterator<T> {
+        void first();
+        void next();
+        T getCurrentObject();
+        void setCurrentObject(T value);
+        bool isEOL();
+    }
+
+    internal class ContainerIterator<T> : Iterator<T> {
+        internal Container<T> container;
+        internal Container<T>.ListNode curNode;
+
+        public ContainerIterator(Container<T> _container) {
+            container = _container;
+            first();
+        }
+
+        public void first() {
+            if (container != null && container.head != null)
+                curNode = container.head;
+            else
+                curNode = null;
+        }
+
+        public void next() {
+            if (curNode != null)
+                curNode = curNode.next;
+        }
+
+        public bool isEOL() {
+            return curNode == null;
+        }
+
+        public T getCurrentObject() {
+            if (curNode != null)
+                return curNode.data;
+            return default(T);
+        }
+
+        public void setCurrentObject(T value) {
+            if (curNode != null)
+                curNode.data = value;
+        }
+    }
+
+    public class Container<T> {
+        internal class ListNode {
+            public T data { get; internal set; }
+            public ListNode prev { get; internal set; }
+            public ListNode next { get; internal set; }
+            public ListNode(T _data) {
+                data = _data;
+                prev = null;
+                next = null;
+            }
+        }
+
+        internal ListNode head { get; private set; }
+        internal ListNode tail { get; private set; }
+        internal int Count { get; private set; }
+
+        public Container() {
+            head = null;
+            tail = null;
+            Count = 0;
+        }
+
+        internal ListNode getNodeAt(int index) {
+            if (index >= Count - 1)
+                return tail;
+            else if (index < 1)
+                return head;
+            else {
+                int curPos = 0;
+                ListNode curNode = head;
+                while (curPos != index) {
+                    curNode = curNode.next;
+                    ++curPos;
+                }
+                return curNode;
+            }
+        }
+
+        public void pushBack(T data) {
+            ListNode node = new ListNode(data);
+
+            if (tail == null)
+                head = node;
+            else {
+                tail.next = node;
+                node.prev = tail;
+            }
+            tail = node;
+            Count++;
+        }
+
+        public void pushFront(T data) {
+            ListNode node = new ListNode(data);
+
+            if (head == null)
+                tail = node;
+            else {
+                head.prev = node;
+                node.next = head;
+            }
+            head = node;
+            Count++;
+        }
+
+        public void insertAfter(T value, int index) {
+            if (head == null) {
+                head = tail = new ListNode(value);
+
+                ++Count;
+            }
+            else {
+                ListNode curNode = getNodeAt(index);
+
+                if (curNode == tail) pushBack(value);
+                else {
+                    ListNode elem = new ListNode(value);
+                    elem.next = curNode.next;
+                    elem.prev = curNode;
+
+                    if (curNode.next != null)
+                        curNode.next.prev = elem;
+                    curNode.next = elem;
+
+                    ++Count;
+                }
+            }
+        }
+
+        public T popBack() {
+            if (tail != null) {
+                T tmp = tail.data;
+                if (tail.prev != null) {
+                    tail = tail.prev;
+                    tail.next = null;
+                }
+                else
+                    head = tail = null;
+
+                --Count;
+                return tmp;
+            }
+            return default(T);
+        }
+
+        public T popFront() {
+            if (head != null) {
+                T tmp = head.data;
+                if (head.next != null) {
+                    head = head.next;
+                    head.prev = null;
+                }
+                else
+                    head = tail = null;
+
+                --Count;
+                return tmp;
+            }
+            return default(T);
+        }
+
+        public void removeAt(int index) {
+            if (Count == 0)
+                return;
+
+            if (index < 0 || index >= Count - 1)
+                return;
+
+            if (Count == 1)
+                head = tail = null;
+            else {
+                ListNode curNode = getNodeAt(index);
+                if (curNode == head) {
+                    head = head.next;
+                    if (head != null)
+                        head.prev = null;
+                }
+                else if (curNode == tail) {
+                    tail = tail.prev;
+                    if (tail != null)
+                        tail.next = null;
+                }
+                else {
+                    if (curNode.prev != null)
+                        curNode.prev.next = curNode.next;
+                    if (curNode.next != null)
+                        curNode.next.prev = curNode.prev;
+                }
+            }
+            --Count;
+        }
+
+        private int Size { get { return Count; } }
+        private bool isEmpty { get { return Count == 0; } }
+
+        public Iterator<T> createIterator() {
+            return new ContainerIterator<T>(this);
+        }
+
+        public void Print() {
+            ListNode curNode = head;
+            for (int i = 0; i < Count; i++) {
+                Console.Write("{0} ", curNode.data);
+                curNode = curNode.next;
+            }
+        }
+    }
+}
