@@ -23,39 +23,18 @@
         /// содержимое этого метода с помощью редактора кода.
         /// </summary>
         private void InitializeComponent() {
-            this.lblNumOfSelectedCircles = new System.Windows.Forms.Label();
-            this.NumOfSelectedCircles = new System.Windows.Forms.Label();
             this.lblNewSircleRadius = new System.Windows.Forms.Label();
             this.newCircleRadius = new System.Windows.Forms.NumericUpDown();
-            this.isMultipleSelection = new System.Windows.Forms.CheckBox();
-            this.isWorkingWithCtrl = new System.Windows.Forms.CheckBox();
             this.pnlPaint = new System.Windows.Forms.Panel();
+            this.cdChooseColor = new System.Windows.Forms.ColorDialog();
+            this.btnChooseColor = new System.Windows.Forms.Button();
+            this.cbChooseFigure = new System.Windows.Forms.ComboBox();
             ((System.ComponentModel.ISupportInitialize)(this.newCircleRadius)).BeginInit();
             this.SuspendLayout();
             // 
-            // lblNumOfSelectedCircles
-            // 
-            this.lblNumOfSelectedCircles.Anchor = System.Windows.Forms.AnchorStyles.Top;
-            this.lblNumOfSelectedCircles.AutoSize = true;
-            this.lblNumOfSelectedCircles.Location = new System.Drawing.Point(388, 10);
-            this.lblNumOfSelectedCircles.Name = "lblNumOfSelectedCircles";
-            this.lblNumOfSelectedCircles.Size = new System.Drawing.Size(166, 13);
-            this.lblNumOfSelectedCircles.TabIndex = 13;
-            this.lblNumOfSelectedCircles.Text = "Количество выбранных кругов:";
-            // 
-            // NumOfSelectedCircles
-            // 
-            this.NumOfSelectedCircles.Anchor = System.Windows.Forms.AnchorStyles.Top;
-            this.NumOfSelectedCircles.AutoSize = true;
-            this.NumOfSelectedCircles.Location = new System.Drawing.Point(552, 11);
-            this.NumOfSelectedCircles.Name = "NumOfSelectedCircles";
-            this.NumOfSelectedCircles.Size = new System.Drawing.Size(13, 13);
-            this.NumOfSelectedCircles.TabIndex = 12;
-            this.NumOfSelectedCircles.Text = "0";
-            // 
             // lblNewSircleRadius
             // 
-            this.lblNewSircleRadius.Anchor = System.Windows.Forms.AnchorStyles.Top;
+            this.lblNewSircleRadius.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.lblNewSircleRadius.AutoSize = true;
             this.lblNewSircleRadius.Location = new System.Drawing.Point(601, 10);
             this.lblNewSircleRadius.Name = "lblNewSircleRadius";
@@ -65,7 +44,7 @@
             // 
             // newCircleRadius
             // 
-            this.newCircleRadius.Anchor = System.Windows.Forms.AnchorStyles.Top;
+            this.newCircleRadius.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.newCircleRadius.Location = new System.Drawing.Point(754, 8);
             this.newCircleRadius.Maximum = new decimal(new int[] {
             40,
@@ -87,27 +66,6 @@
             0});
             this.newCircleRadius.ValueChanged += new System.EventHandler(this.newCircleRadius_ValueChanged);
             // 
-            // isMultipleSelection
-            // 
-            this.isMultipleSelection.Anchor = System.Windows.Forms.AnchorStyles.Top;
-            this.isMultipleSelection.AutoSize = true;
-            this.isMultipleSelection.Location = new System.Drawing.Point(150, 9);
-            this.isMultipleSelection.Name = "isMultipleSelection";
-            this.isMultipleSelection.Size = new System.Drawing.Size(216, 17);
-            this.isMultipleSelection.TabIndex = 9;
-            this.isMultipleSelection.Text = "Выделяются сразу несколько кругов";
-            this.isMultipleSelection.UseVisualStyleBackColor = true;
-            // 
-            // isWorkingWithCtrl
-            // 
-            this.isWorkingWithCtrl.AutoSize = true;
-            this.isWorkingWithCtrl.Location = new System.Drawing.Point(7, 9);
-            this.isWorkingWithCtrl.Name = "isWorkingWithCtrl";
-            this.isWorkingWithCtrl.Size = new System.Drawing.Size(138, 17);
-            this.isWorkingWithCtrl.TabIndex = 8;
-            this.isWorkingWithCtrl.Text = "Клавиша Ctrl работает";
-            this.isWorkingWithCtrl.UseVisualStyleBackColor = true;
-            // 
             // pnlPaint
             // 
             this.pnlPaint.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
@@ -121,17 +79,41 @@
             this.pnlPaint.Paint += new System.Windows.Forms.PaintEventHandler(this.pnlPaint_Paint);
             this.pnlPaint.MouseDown += new System.Windows.Forms.MouseEventHandler(this.pnlPaint_MouseDown);
             // 
+            // cdChooseColor
+            // 
+            this.cdChooseColor.FullOpen = true;
+            // 
+            // btnChooseColor
+            // 
+            this.btnChooseColor.BackColor = System.Drawing.Color.SkyBlue;
+            this.btnChooseColor.Location = new System.Drawing.Point(8, 8);
+            this.btnChooseColor.Name = "btnChooseColor";
+            this.btnChooseColor.Size = new System.Drawing.Size(25, 25);
+            this.btnChooseColor.TabIndex = 14;
+            this.btnChooseColor.UseVisualStyleBackColor = false;
+            this.btnChooseColor.Click += new System.EventHandler(this.btnChooseColor_Click);
+            // 
+            // cbChooseFigure
+            // 
+            this.cbChooseFigure.FormattingEnabled = true;
+            this.cbChooseFigure.Items.AddRange(new object[] {
+            "Круг",
+            "Квадрат",
+            "Треугольник"});
+            this.cbChooseFigure.Location = new System.Drawing.Point(39, 10);
+            this.cbChooseFigure.Name = "cbChooseFigure";
+            this.cbChooseFigure.Size = new System.Drawing.Size(121, 21);
+            this.cbChooseFigure.TabIndex = 15;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(804, 461);
-            this.Controls.Add(this.lblNumOfSelectedCircles);
-            this.Controls.Add(this.NumOfSelectedCircles);
+            this.Controls.Add(this.cbChooseFigure);
+            this.Controls.Add(this.btnChooseColor);
             this.Controls.Add(this.lblNewSircleRadius);
             this.Controls.Add(this.newCircleRadius);
-            this.Controls.Add(this.isMultipleSelection);
-            this.Controls.Add(this.isWorkingWithCtrl);
             this.Controls.Add(this.pnlPaint);
             this.KeyPreview = true;
             this.MinimumSize = new System.Drawing.Size(820, 500);
@@ -146,14 +128,12 @@
         }
 
         #endregion
-
-        private System.Windows.Forms.Label lblNumOfSelectedCircles;
-        private System.Windows.Forms.Label NumOfSelectedCircles;
         private System.Windows.Forms.Label lblNewSircleRadius;
         private System.Windows.Forms.NumericUpDown newCircleRadius;
-        private System.Windows.Forms.CheckBox isMultipleSelection;
-        private System.Windows.Forms.CheckBox isWorkingWithCtrl;
         private System.Windows.Forms.Panel pnlPaint;
+        private System.Windows.Forms.ColorDialog cdChooseColor;
+        private System.Windows.Forms.Button btnChooseColor;
+        private System.Windows.Forms.ComboBox cbChooseFigure;
     }
 }
 
