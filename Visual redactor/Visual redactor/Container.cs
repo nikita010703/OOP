@@ -8,13 +8,17 @@ using System.Threading.Tasks;
 namespace Container {
     public interface Iterator<T> {
         void first();
+        void last();
         void next();
+        void previous();
+        int getPosition();
         T getCurrentObject();
         void setCurrentObject(T value);
         bool isEOL();
     }
 
     internal class ContainerIterator<T> : Iterator<T> {
+        internal int pos;
         internal Container<T> container;
         internal Container<T>.ListNode curNode;
 
@@ -28,11 +32,95 @@ namespace Container {
                 curNode = container.head;
             else
                 curNode = null;
+
+            pos = 0;
+        }
+
+        public void last() {
+            if (container != null && container.tail != null)
+                curNode = container.tail;
+            else
+                curNode = null;
+
+            pos = container.Count - 1;
         }
 
         public void next() {
-            if (curNode != null)
+            if (curNode != null) {
                 curNode = curNode.next;
+                ++pos;
+            }
+        }
+
+        public void previous() {
+            if (curNode != null && curNode.prev != null)
+                curNode = curNode.prev;
+            --pos;
+        }
+
+        public int getPosition() {
+            return pos;
+        }
+
+        public bool isEOL() {
+            return curNode == null;
+        }
+
+        public T getCurrentObject() {
+            if (curNode != null)
+                return curNode.data;
+            return default(T);
+        }
+
+        public void setCurrentObject(T value) {
+            if (curNode != null)
+                curNode.data = value;
+        }
+    }
+
+    internal class ReverseContainerIterator<T> : Iterator<T> {
+        internal int pos;
+        internal Container<T> container;
+        internal Container<T>.ListNode curNode;
+
+        public ReverseContainerIterator(Container<T> _container) {
+            container = _container;
+            first();
+        }
+
+        public void first() {
+            if (container != null && container.tail != null)
+                curNode = container.tail;
+            else
+                curNode = null;
+
+            pos = container.Count - 1;
+        }
+
+        public void last() {
+            if (container != null && container.head != null)
+                curNode = container.head;
+            else
+                curNode = null;
+
+            pos = 0;
+        }
+
+        public void next() {
+            if (curNode != null) {
+                curNode = curNode.prev;
+                --pos;
+            }
+        }
+
+        public void previous() {
+            if (curNode != null && curNode.next != null)
+                curNode = curNode.next;
+            ++pos;
+        }
+
+        public int getPosition() {
+            return pos;
         }
 
         public bool isEOL() {
@@ -175,7 +263,7 @@ namespace Container {
             if (Count == 0)
                 return;
 
-            if (index < 0 || index >= Count - 1)
+            if (index < 0 || index >= Count)
                 return;
 
             if (Count == 1)
@@ -209,12 +297,8 @@ namespace Container {
             return new ContainerIterator<T>(this);
         }
 
-        public void Print() {
-            ListNode curNode = head;
-            for (int i = 0; i < Count; i++) {
-                Console.Write("{0} ", curNode.data);
-                curNode = curNode.next;
-            }
+        public Iterator<T> createReverseIterator() {
+            return new ReverseContainerIterator<T>(this);
         }
     }
 }
