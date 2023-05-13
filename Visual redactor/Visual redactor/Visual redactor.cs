@@ -87,13 +87,45 @@ namespace Visual_redactor {
         private void pnlPaint_MouseDown(object sender, MouseEventArgs e) {
             Processingfigures(e);
 
+            pnlPaint.Focus();
             pnlPaint.Invalidate();
         }
 
         private void FormCircles_KeyDown(object sender, KeyEventArgs e) {
             if (e.KeyCode == Keys.ControlKey)
                 isPressedCtrl = true;
+        }
 
+        private void FormCircles_KeyUp(object sender, KeyEventArgs e) {
+            if (e.KeyCode == Keys.ControlKey)
+                isPressedCtrl = false;
+        }
+
+        private void newCircleRadius_ValueChanged(object sender, EventArgs e) {
+            figureSize = (int)newCircleRadius.Value;
+        }
+
+        private void btnChooseColor_Click(object sender, EventArgs e) {
+            if (cdChooseColor.ShowDialog() == DialogResult.OK)
+                btnChooseColor.BackColor = cdChooseColor.Color;
+
+            pnlPaint.Focus();
+        }
+
+        private void btnSetColor_Click(object sender, EventArgs e) {
+            Iterator<Figure> it = figures.createIterator();
+            for (it.first(); !it.isEOL(); it.next()) {
+                Figure fig = it.getCurrentObject();
+                if (fig.IsSelected)
+                    fig.ChangeColor(cdChooseColor.Color);
+            }
+
+            pnlPaint.Focus();
+            pnlPaint.Invalidate();
+        }
+
+        private void pnlPaint_PreviewKeyDown(object sender, PreviewKeyDownEventArgs e) {
+            /*
             if (e.KeyCode == Keys.Delete) {
                 Iterator<Figure> it = figures.createIterator();
                 for (it.first(); !it.isEOL(); it.next())
@@ -113,20 +145,66 @@ namespace Visual_redactor {
 
                 pnlPaint.Invalidate();
             }
-        }
 
-        private void FormCircles_KeyUp(object sender, KeyEventArgs e) {
-            if (e.KeyCode == Keys.ControlKey)
-                isPressedCtrl = false;
-        }
+            if (e.KeyCode == Keys.Oemplus) {
+                Iterator<Figure> it = figures.createIterator();
+                for (it.first(); !it.isEOL(); it.next()) {
+                    Figure fig = it.getCurrentObject();
+                    if (fig.IsSelected)
+                        fig.ChangeSize(5);
+                }
+                pnlPaint.Invalidate();
+            }
 
-        private void newCircleRadius_ValueChanged(object sender, EventArgs e) {
-            figureSize = (int)newCircleRadius.Value;
-        }
+            if (e.KeyCode == Keys.OemMinus) {
+                Iterator<Figure> it = figures.createIterator();
+                for (it.first(); !it.isEOL(); it.next()) {
+                    Figure fig = it.getCurrentObject();
+                    if (fig.IsSelected)
+                        fig.ChangeSize(-5);
+                }
+                pnlPaint.Invalidate();
+            }
 
-        private void btnChooseColor_Click(object sender, EventArgs e) {
-            if (cdChooseColor.ShowDialog() == DialogResult.OK)
-                btnChooseColor.BackColor = cdChooseColor.Color;
+            if (e.KeyCode == Keys.Left) {
+                Iterator<Figure> it = figures.createIterator();
+                for (it.first(); !it.isEOL(); it.next()) {
+                    Figure fig = it.getCurrentObject();
+                    if (fig.IsSelected)
+                        fig.Move(-5, 0);
+                }
+                pnlPaint.Invalidate();
+            }*/
+
+            Iterator<Figure> it = figures.createIterator();
+            for (it.first(); !it.isEOL(); it.next()) {
+                Figure fig = it.getCurrentObject();
+                if (fig.IsSelected)
+                    switch (e.KeyCode) {
+                        case Keys.Delete: {
+                                int tmp = it.getPosition();
+                                it.previous();
+                                figures.removeAt(tmp);
+                            }
+                            break;
+
+                        case Keys.OemMinus:
+                            fig.ChangeSize(-5); break;
+                        case Keys.Oemplus:
+                            fig.ChangeSize(5); break;
+
+                        case Keys.Left:
+                            fig.Move(-5, 0); break;
+                        case Keys.Right:
+                            fig.Move(5, 0); break;
+                        case Keys.Up:
+                            fig.Move(0, -5); break;
+                        case Keys.Down:
+                            fig.Move(0, 5); break;
+                    }
+            }
+            pnlPaint.Invalidate();
+            pnlPaint.BringToFront();
         }
     }
 }

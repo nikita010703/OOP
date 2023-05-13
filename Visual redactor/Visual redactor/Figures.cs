@@ -18,7 +18,7 @@ namespace Figures {
         public void Unselect() {
             isSelected = false;
         }
-        public abstract void ChangeSize(int newSize);
+        public abstract void ChangeSize(int dSize);
         public abstract void ChangeColor(Color color);
         public abstract void Paint(Graphics g);
     }
@@ -55,8 +55,10 @@ namespace Figures {
             return Math.Pow(x - _x, 2) + Math.Pow(y - _y, 2) < Math.Pow(rad, 2);
         }
 
-        public override void ChangeSize(int newSize) {
-            rad = newSize;
+        public override void ChangeSize(int dSize) {
+            rad += dSize;
+            if (rad < 5)
+                rad = 5;
         }
 
         public override void ChangeColor(Color _color) {
@@ -109,8 +111,10 @@ namespace Figures {
             return Math.Abs(x - _x) < size && Math.Abs(y - _y) < size;
         }
 
-        public override void ChangeSize(int newSize) {
-            size = newSize;
+        public override void ChangeSize(int dSize) {
+            size += dSize;
+            if (size < 5)
+                size = 5;
         }
 
         public override void ChangeColor(Color _color) {
@@ -184,8 +188,11 @@ namespace Figures {
             return (a >= 0 && b >= 0 && c >= 0) || (a <= 0 && b <= 0 && c <= 0);
         }
 
-        public override void ChangeSize(int newSize) {
-            size = newSize;
+        public override void ChangeSize(int dSize) {
+            size = dSize;
+            if (size < 5)
+                size = 5;
+
             calculatePoints();
         }
 
