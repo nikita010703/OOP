@@ -16,6 +16,7 @@ namespace Visual_redactor {
         bool isPressedCtrl = false;
         int selectedFigures = 1;
         Container<Figure> figures = new Container<Figure>();
+        HashSet<Keys> existingCommands = new HashSet<Keys>();
 
         public Form1() {
             InitializeComponent();
@@ -23,14 +24,26 @@ namespace Visual_redactor {
             cbChooseFigure.SelectedIndex = 0;
             cdChooseColor= new ColorDialog();
             cdChooseColor.Color = Color.SkyBlue;
+
+            existingCommands.Add(Keys.Delete);
+            existingCommands.Add(Keys.W);
+            existingCommands.Add(Keys.A);
+            existingCommands.Add(Keys.S);
+            existingCommands.Add(Keys.D);
+            existingCommands.Add(Keys.Oemplus);
+            existingCommands.Add(Keys.Add);
+            existingCommands.Add(Keys.OemMinus);
+            existingCommands.Add(Keys.Subtract);
         }
 
-        private void pnlPaint_Paint(object sender, PaintEventArgs e) {
-            Graphics g = e.Graphics;
+        private void FormCircles_KeyDown(object sender, KeyEventArgs e) {
+            if (e.KeyCode == Keys.ControlKey)
+                isPressedCtrl = true;
+        }
 
-            Iterator<Figure> it = figures.createIterator();
-            for (it.first(); !it.isEOL(); it.next())
-                it.getCurrentObject().Paint(g);
+        private void FormCircles_KeyUp(object sender, KeyEventArgs e) {
+            if (e.KeyCode == Keys.ControlKey)
+                isPressedCtrl = false;
         }
 
         private void Processingfigures(MouseEventArgs e) {
@@ -77,6 +90,7 @@ namespace Visual_redactor {
                     default: newFigure = new Triangle(e.X, e.Y, figureSize, cdChooseColor.Color); break;
                 };
                 newFigure.Select();
+                newFigure.SetBorders(pnlPaint.Width, pnlPaint.Height);
                 figures.pushBack(newFigure);
 
                 if (isPressedCtrl) selectedFigures++;
@@ -84,44 +98,27 @@ namespace Visual_redactor {
             }
         }
 
+        private void pnlPaint_Paint(object sender, PaintEventArgs e) {
+            Graphics g = e.Graphics;
+
+            Iterator<Figure> it = figures.createIterator();
+            for (it.first(); !it.isEOL(); it.next())
+                it.getCurrentObject().Paint(g);
+        }
+
         private void pnlPaint_MouseDown(object sender, MouseEventArgs e) {
             Processingfigures(e);
 
             pnlPaint.Focus();
-            pnlPaint.Invalidate();
+            pnlPaint.Refresh();
         }
 
-        private void FormCircles_KeyDown(object sender, KeyEventArgs e) {
-            if (e.KeyCode == Keys.ControlKey)
-                isPressedCtrl = true;
-        }
-
-        private void FormCircles_KeyUp(object sender, KeyEventArgs e) {
-            if (e.KeyCode == Keys.ControlKey)
-                isPressedCtrl = false;
-        }
-
-        private void newCircleRadius_ValueChanged(object sender, EventArgs e) {
-            figureSize = (int)newCircleRadius.Value;
-        }
-
-        private void btnChooseColor_Click(object sender, EventArgs e) {
-            if (cdChooseColor.ShowDialog() == DialogResult.OK)
-                btnChooseColor.BackColor = cdChooseColor.Color;
-
-            pnlPaint.Focus();
-        }
-
-        private void btnSetColor_Click(object sender, EventArgs e) {
+        private void pnlPaint_Resize(object sender, EventArgs e) {
             Iterator<Figure> it = figures.createIterator();
-            for (it.first(); !it.isEOL(); it.next()) {
-                Figure fig = it.getCurrentObject();
-                if (fig.IsSelected)
-                    fig.ChangeColor(cdChooseColor.Color);
-            }
+            for (it.first(); !it.isEOL(); it.next())
+                it.getCurrentObject().SetBorders(pnlPaint.Width, pnlPaint.Height);
 
-            pnlPaint.Focus();
-            pnlPaint.Invalidate();
+            pnlPaint.Refresh();
         }
 
         private void pnlPaint_PreviewKeyDown(object sender, PreviewKeyDownEventArgs e) {
@@ -175,36 +172,72 @@ namespace Visual_redactor {
                 }
                 pnlPaint.Invalidate();
             }*/
+            if (!existingCommands.Contains(e.KeyCode))
+                return; 
 
             Iterator<Figure> it = figures.createIterator();
             for (it.first(); !it.isEOL(); it.next()) {
                 Figure fig = it.getCurrentObject();
                 if (fig.IsSelected)
                     switch (e.KeyCode) {
-                        case Keys.Delete: {
-                                int tmp = it.getPosition();
-                                it.previous();
-                                figures.removeAt(tmp);
-                            }
+                        case Keys.Delete:
+                            int tmp = it.getPosition();
+                            it.previous();
+                            figures.removeAt(tmp);
                             break;
 
+                        case Keys.Subtract:
                         case Keys.OemMinus:
                             fig.ChangeSize(-5); break;
+                        case Keys.Add:
                         case Keys.Oemplus:
                             fig.ChangeSize(5); break;
 
-                        case Keys.Left:
+                        case Keys.A:
                             fig.Move(-5, 0); break;
-                        case Keys.Right:
+                        case Keys.D:
                             fig.Move(5, 0); break;
-                        case Keys.Up:
+                        case Keys.W:
                             fig.Move(0, -5); break;
-                        case Keys.Down:
+                        case Keys.S:
                             fig.Move(0, 5); break;
                     }
             }
-            pnlPaint.Invalidate();
-            pnlPaint.BringToFront();
+
+            if (e.KeyCode == Keys.Delete) {
+                if (figures.Count > 0) {
+                    it.last();
+                    it.getCurrentObject().Select();
+                    selectedFigures = 1;
+                }
+                else
+                    selectedFigures = 0;
+            }
+
+            pnlPaint.Refresh();
+        }
+
+        private void newFirureSize_ValueChanged(object sender, EventArgs e) {
+            figureSize = (int)newFirureSize.Value;
+        }
+
+        private void btnChooseColor_Click(object sender, EventArgs e) {
+            if (cdChooseColor.ShowDialog() == DialogResult.OK)
+                btnChooseColor.BackColor = cdChooseColor.Color;
+
+            pnlPaint.Focus();
+        }
+
+        private void btnSetColor_Click(object sender, EventArgs e) {
+            Iterator<Figure> it = figures.createIterator();
+            for (it.first(); !it.isEOL(); it.next()) {
+                Figure fig = it.getCurrentObject();
+                if (fig.IsSelected)
+                    fig.ChangeColor(cdChooseColor.Color);
+            }
+
+            pnlPaint.Focus();
+            pnlPaint.Refresh();
         }
     }
 }

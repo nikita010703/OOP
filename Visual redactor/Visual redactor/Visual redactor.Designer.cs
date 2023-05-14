@@ -23,8 +23,9 @@
         /// содержимое этого метода с помощью редактора кода.
         /// </summary>
         private void InitializeComponent() {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
             this.lblNewSircleRadius = new System.Windows.Forms.Label();
-            this.newCircleRadius = new System.Windows.Forms.NumericUpDown();
+            this.newFirureSize = new System.Windows.Forms.NumericUpDown();
             this.pnlPaint = new System.Windows.Forms.Panel();
             this.cdChooseColor = new System.Windows.Forms.ColorDialog();
             this.btnChooseColor = new System.Windows.Forms.Button();
@@ -32,48 +33,45 @@
             this.lbCurrentFigure = new System.Windows.Forms.Label();
             this.lbCurrentColor = new System.Windows.Forms.Label();
             this.btnSetColor = new System.Windows.Forms.Button();
-            ((System.ComponentModel.ISupportInitialize)(this.newCircleRadius)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.newFirureSize)).BeginInit();
             this.SuspendLayout();
             // 
             // lblNewSircleRadius
             // 
             this.lblNewSircleRadius.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.lblNewSircleRadius.AutoSize = true;
-            this.lblNewSircleRadius.Location = new System.Drawing.Point(601, 10);
+            this.lblNewSircleRadius.Location = new System.Drawing.Point(590, 11);
             this.lblNewSircleRadius.Name = "lblNewSircleRadius";
-            this.lblNewSircleRadius.Size = new System.Drawing.Size(153, 13);
+            this.lblNewSircleRadius.Size = new System.Drawing.Size(161, 13);
             this.lblNewSircleRadius.TabIndex = 11;
-            this.lblNewSircleRadius.Text = "Радиус добавляемого круга:";
+            this.lblNewSircleRadius.Text = "Размер добавляемой фигуры:";
             // 
-            // newCircleRadius
+            // newFirureSize
             // 
-            this.newCircleRadius.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.newCircleRadius.Location = new System.Drawing.Point(754, 8);
-            this.newCircleRadius.Maximum = new decimal(new int[] {
-            40,
+            this.newFirureSize.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.newFirureSize.Location = new System.Drawing.Point(754, 8);
+            this.newFirureSize.Minimum = new decimal(new int[] {
+            5,
             0,
             0,
             0});
-            this.newCircleRadius.Minimum = new decimal(new int[] {
+            this.newFirureSize.Name = "newFirureSize";
+            this.newFirureSize.Size = new System.Drawing.Size(37, 20);
+            this.newFirureSize.TabIndex = 10;
+            this.newFirureSize.TabStop = false;
+            this.newFirureSize.Value = new decimal(new int[] {
             25,
             0,
             0,
             0});
-            this.newCircleRadius.Name = "newCircleRadius";
-            this.newCircleRadius.Size = new System.Drawing.Size(37, 20);
-            this.newCircleRadius.TabIndex = 10;
-            this.newCircleRadius.TabStop = false;
-            this.newCircleRadius.Value = new decimal(new int[] {
-            25,
-            0,
-            0,
-            0});
-            this.newCircleRadius.ValueChanged += new System.EventHandler(this.newCircleRadius_ValueChanged);
+            this.newFirureSize.ValueChanged += new System.EventHandler(this.newFirureSize_ValueChanged);
             // 
             // pnlPaint
             // 
+            this.pnlPaint.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.pnlPaint.BackColor = System.Drawing.SystemColors.ControlLight;
-            this.pnlPaint.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.pnlPaint.Location = new System.Drawing.Point(0, 42);
             this.pnlPaint.Name = "pnlPaint";
             this.pnlPaint.Size = new System.Drawing.Size(804, 419);
@@ -82,6 +80,7 @@
             this.pnlPaint.Paint += new System.Windows.Forms.PaintEventHandler(this.pnlPaint_Paint);
             this.pnlPaint.MouseDown += new System.Windows.Forms.MouseEventHandler(this.pnlPaint_MouseDown);
             this.pnlPaint.PreviewKeyDown += new System.Windows.Forms.PreviewKeyDownEventHandler(this.pnlPaint_PreviewKeyDown);
+            this.pnlPaint.Resize += new System.EventHandler(this.pnlPaint_Resize);
             // 
             // cdChooseColor
             // 
@@ -153,15 +152,16 @@
             this.Controls.Add(this.cbChooseFigure);
             this.Controls.Add(this.btnChooseColor);
             this.Controls.Add(this.lblNewSircleRadius);
-            this.Controls.Add(this.newCircleRadius);
+            this.Controls.Add(this.newFirureSize);
             this.Controls.Add(this.pnlPaint);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.KeyPreview = true;
             this.MinimumSize = new System.Drawing.Size(820, 500);
             this.Name = "Form1";
-            this.Text = "Form1";
+            this.Text = "Визуальный редактор";
             this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.FormCircles_KeyDown);
             this.KeyUp += new System.Windows.Forms.KeyEventHandler(this.FormCircles_KeyUp);
-            ((System.ComponentModel.ISupportInitialize)(this.newCircleRadius)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.newFirureSize)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -169,7 +169,7 @@
 
         #endregion
         private System.Windows.Forms.Label lblNewSircleRadius;
-        private System.Windows.Forms.NumericUpDown newCircleRadius;
+        private System.Windows.Forms.NumericUpDown newFirureSize;
         private System.Windows.Forms.Panel pnlPaint;
         private System.Windows.Forms.ColorDialog cdChooseColor;
         private System.Windows.Forms.Button btnChooseColor;

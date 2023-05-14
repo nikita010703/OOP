@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using System.Runtime.Serialization.Formatters;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -9,8 +10,16 @@ using System.Windows.Forms;
 namespace Figures {
     public abstract class Figure {
         internal bool isSelected;
+        internal int maxValueX, maxValueY;
         public bool IsSelected { get { return isSelected; } }
+
         public abstract void Move(int x, int y);
+        public void SetBorders(int rightBorder, int bottomBorder) {
+            maxValueX = rightBorder;
+            maxValueY = bottomBorder;
+            ChangeSize(0);
+            Move(0, 0);
+        }
         public abstract bool isLiesOn(int _x, int _y);
         public void Select() {
             isSelected = true;
@@ -23,51 +32,70 @@ namespace Figures {
         public abstract void Paint(Graphics g);
     }
 
-    public class CCircle : Figure {
-        private int x, y;
-        private int rad;
-        Color color = Color.SkyBlue;
+    public abstract class SingleFigure : Figure {
+        internal int x, y;
+        internal int size;
+        internal Color color;
 
+        public override void Move(int _x, int _y) {
+            x = x + size + _x > maxValueX? maxValueX - size 
+                : x - size + _x < 0 ? size : x + _x;
+
+            y = y + size + _y > maxValueY ? maxValueY - size
+                : y - size + _y < 0 ? size : y + _y;
+            /*
+            x += _x;
+            if (x + size > maxValueX)
+                x = maxValueX - size;
+            else if (x - size < 0) x = size;
+
+            y += _y;
+            if (y + size > maxValueY)
+                y = maxValueY - size;
+            else if (y - size < 0) y = size;
+            */
+        }
+
+        public override void ChangeSize(int dSize) {
+            size = size + dSize < 5 ? 5
+                : (size + dSize) * 2 > maxValueX ? maxValueX / 2
+                : (size + dSize) * 2 > maxValueY ? maxValueY / 2 : size + dSize;
+
+            Move(0, 0);
+        }
+
+        public override void ChangeColor(Color _color) {
+            color = _color;
+        }
+    }
+
+    public class CCircle : SingleFigure {
         public CCircle() {
             x = y = 0;
-            rad = 25;
+            size = 25;
             isSelected = false;
         }
-        public CCircle(int _x, int _y, int _rad, Color _color) {
+        public CCircle(int _x, int _y, int _size, Color _color) {
             x = _x;
             y = _y;
-            rad = _rad;
+            size = _size;
             isSelected = false;
             color = _color;
         }
         public CCircle(CCircle existingCircle) {
             x = existingCircle.x;
             y = existingCircle.y;
-            rad = existingCircle.rad;
+            size = existingCircle.size;
             isSelected = existingCircle.isSelected;
         }
 
-        public override void Move(int _x, int _y) {
-            x += _x; y += _y;
-        }
-
         public override bool isLiesOn(int _x, int _y)  {
-            return Math.Pow(x - _x, 2) + Math.Pow(y - _y, 2) < Math.Pow(rad, 2);
-        }
-
-        public override void ChangeSize(int dSize) {
-            rad += dSize;
-            if (rad < 5)
-                rad = 5;
-        }
-
-        public override void ChangeColor(Color _color) {
-            color = _color;
+            return Math.Pow(x - _x, 2) + Math.Pow(y - _y, 2) < Math.Pow(size, 2);
         }
 
         public override void Paint(Graphics g) {
             SolidBrush brush = new SolidBrush(color);
-            g.FillEllipse(brush, x - rad, y - rad, 2 * rad, 2 * rad);
+            g.FillEllipse(brush, x - size, y - size, 2 * size, 2 * size);
 
             Pen p = new Pen(color);
             p.Width = 3;
@@ -75,24 +103,20 @@ namespace Figures {
                 p.Color = Color.RoyalBlue;
                 p.DashStyle = System.Drawing.Drawing2D.DashStyle.Dash;
             }
-            g.DrawEllipse(p, x - rad, y - rad, 2 * rad, 2 * rad);
+            g.DrawEllipse(p, x - size, y - size, 2 * size, 2 * size);
         }
     }
 
-    public class Square : Figure {
-        int x, y;
-        int size;
-        Color color;
-
+    public class Square : SingleFigure {
         public Square() {
             x = y = 0;
             size = 25;
             isSelected = false;
         }
-        public Square(int _x, int _y, int _rad, Color _color) {
+        public Square(int _x, int _y, int _size, Color _color) {
             x = _x;
             y = _y;
-            size = _rad;
+            size = _size;
             isSelected = false;
             color = _color;
         }
@@ -103,22 +127,8 @@ namespace Figures {
             isSelected = existingSquare.isSelected;
         }
 
-        public override void Move(int _x, int _y) {
-            x += _x; y += _y;
-        }
-
         public override bool isLiesOn(int _x, int _y) {
             return Math.Abs(x - _x) < size && Math.Abs(y - _y) < size;
-        }
-
-        public override void ChangeSize(int dSize) {
-            size += dSize;
-            if (size < 5)
-                size = 5;
-        }
-
-        public override void ChangeColor(Color _color) {
-            color = _color;
         }
 
         public override void Paint(Graphics g) {
@@ -135,11 +145,9 @@ namespace Figures {
         }
     }
 
-    public class Triangle : Figure {
-        int x, y;
-        int size;
-        Color color;
+    public class Triangle : SingleFigure {
         Point[] points = new Point[3];
+        int dX;
 
         public Triangle() {
             x = y = 25;
@@ -167,7 +175,7 @@ namespace Figures {
         }
         */
         private void calculatePoints() {
-            int dX = (int)Math.Sqrt(0.75f * size * size);
+            dX = (int)Math.Sqrt(0.75f * size * size);
             points[0].X = x;
             points[0].Y = y - size;
             points[1].X = x + dX;
@@ -177,7 +185,12 @@ namespace Figures {
         }
 
         public override void Move(int _x, int _y) {
-            x += _x; y += _y;
+            x = x + dX + _x > maxValueX ? maxValueX - dX
+                : x - dX + _x < 0 ? dX : x + _x;
+
+            y = y + size / 2 + _y > maxValueY ? maxValueY - size / 2
+                : y - size + _y < 0 ? size : y + _y;
+
             calculatePoints();
         }
 
@@ -189,15 +202,12 @@ namespace Figures {
         }
 
         public override void ChangeSize(int dSize) {
-            size = dSize;
-            if (size < 5)
-                size = 5;
+            size = size + dSize < 5 ? 5
+                : (dSize + dX) * 2 > maxValueX ? 4 * maxValueX / 7
+                : 3 * size / 2 + 2 * dSize > maxValueY ? 2 * maxValueY / 3 : size + dSize;
 
             calculatePoints();
-        }
-
-        public override void ChangeColor(Color _color) {
-            color = _color;
+            Move(0, 0);
         }
 
         public override void Paint(Graphics g) {
