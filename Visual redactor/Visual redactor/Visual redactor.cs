@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Xml.Linq;
 using Container;
 using Figures;
 
@@ -90,7 +91,7 @@ namespace Visual_redactor {
                     default: newFigure = new Triangle(e.X, e.Y, figureSize, cdChooseColor.Color); break;
                 };
                 newFigure.Select();
-                newFigure.SetBorders(pnlPaint.Width, pnlPaint.Height);
+                newFigure.Move(0, 0, pnlPaint.Width, pnlPaint.Height);
                 figures.pushBack(newFigure);
 
                 if (isPressedCtrl) selectedFigures++;
@@ -116,62 +117,12 @@ namespace Visual_redactor {
         private void pnlPaint_Resize(object sender, EventArgs e) {
             Iterator<Figure> it = figures.createIterator();
             for (it.first(); !it.isEOL(); it.next())
-                it.getCurrentObject().SetBorders(pnlPaint.Width, pnlPaint.Height);
+                it.getCurrentObject().Move(0, 0, pnlPaint.Width, pnlPaint.Height);
 
             pnlPaint.Refresh();
         }
 
         private void pnlPaint_PreviewKeyDown(object sender, PreviewKeyDownEventArgs e) {
-            /*
-            if (e.KeyCode == Keys.Delete) {
-                Iterator<Figure> it = figures.createIterator();
-                for (it.first(); !it.isEOL(); it.next())
-                    if (it.getCurrentObject().IsSelected) {
-                        int tmp = it.getPosition();
-                        it.previous();
-                        figures.removeAt(tmp);
-                    }
-
-                if (figures.Count > 0) {
-                    it.last();
-                    it.getCurrentObject().Select();
-                    selectedFigures = 1;
-                }
-                else
-                    selectedFigures = 0;
-
-                pnlPaint.Invalidate();
-            }
-
-            if (e.KeyCode == Keys.Oemplus) {
-                Iterator<Figure> it = figures.createIterator();
-                for (it.first(); !it.isEOL(); it.next()) {
-                    Figure fig = it.getCurrentObject();
-                    if (fig.IsSelected)
-                        fig.ChangeSize(5);
-                }
-                pnlPaint.Invalidate();
-            }
-
-            if (e.KeyCode == Keys.OemMinus) {
-                Iterator<Figure> it = figures.createIterator();
-                for (it.first(); !it.isEOL(); it.next()) {
-                    Figure fig = it.getCurrentObject();
-                    if (fig.IsSelected)
-                        fig.ChangeSize(-5);
-                }
-                pnlPaint.Invalidate();
-            }
-
-            if (e.KeyCode == Keys.Left) {
-                Iterator<Figure> it = figures.createIterator();
-                for (it.first(); !it.isEOL(); it.next()) {
-                    Figure fig = it.getCurrentObject();
-                    if (fig.IsSelected)
-                        fig.Move(-5, 0);
-                }
-                pnlPaint.Invalidate();
-            }*/
             if (!existingCommands.Contains(e.KeyCode))
                 return; 
 
@@ -188,19 +139,19 @@ namespace Visual_redactor {
 
                         case Keys.Subtract:
                         case Keys.OemMinus:
-                            fig.ChangeSize(-5); break;
+                            fig.ChangeSize(-5, pnlPaint.Width, pnlPaint.Height); break;
                         case Keys.Add:
                         case Keys.Oemplus:
-                            fig.ChangeSize(5); break;
+                            fig.ChangeSize(5, pnlPaint.Width, pnlPaint.Height); break;
 
                         case Keys.A:
-                            fig.Move(-5, 0); break;
+                            fig.Move(-5, 0, pnlPaint.Width, pnlPaint.Height); break;
                         case Keys.D:
-                            fig.Move(5, 0); break;
+                            fig.Move(5, 0, pnlPaint.Width, pnlPaint.Height); break;
                         case Keys.W:
-                            fig.Move(0, -5); break;
+                            fig.Move(0, -5, pnlPaint.Width, pnlPaint.Height); break;
                         case Keys.S:
-                            fig.Move(0, 5); break;
+                            fig.Move(0, 5, pnlPaint.Width, pnlPaint.Height); break;
                     }
             }
 
@@ -238,6 +189,49 @@ namespace Visual_redactor {
 
             pnlPaint.Focus();
             pnlPaint.Refresh();
+        }
+
+        private void btnSetGroup_Click(object sender, EventArgs e) {
+            Container<Figure> container = new Container<Figure>();
+            Iterator<Figure> it = figures.createIterator();
+
+            for (it.first(); !it.isEOL(); it.next()) {
+                Figure fig = it.getCurrentObject();
+                if (fig.IsSelected) {
+                    container.pushBack(fig);
+
+                    int tmp = it.getPosition();
+                    it.previous();
+                    figures.removeAt(tmp);
+                }
+            }
+
+            figures.pushBack(new GroupFigure(container));
+            pnlPaint.Focus();
+            pnlPaint.Refresh();
+        }
+
+        private void btnDecompose_Click(object sender, EventArgs e) {
+            Iterator<Figure> i = figures.createIterator();
+            Container<Figure> container = new Container<Figure>();
+
+            for (i.first(); !i.isEOL(); i.next()) {
+                GroupFigure fig = i.getCurrentObject() as GroupFigure;
+                if (fig != null && fig.IsSelected) {
+                    int tmp = i.getPosition();
+                    i.previous();
+                    figures.removeAt(tmp);
+
+                    Container<Figure> figs = fig.getFigures();
+                    Iterator<Figure> j = figs.createIterator();
+                    for (j.first(); !j.isEOL(); j.next())
+                        container.pushBack(j.getCurrentObject());
+                }
+            }
+
+            Iterator<Figure> k = container.createIterator();
+            for (k.first(); !k.isEOL(); k.next())
+                figures.pushBack(k.getCurrentObject());
         }
     }
 }

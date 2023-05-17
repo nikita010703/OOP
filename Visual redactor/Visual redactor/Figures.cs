@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Container;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
@@ -10,24 +11,13 @@ using System.Windows.Forms;
 namespace Figures {
     public abstract class Figure {
         internal bool isSelected;
-        internal int maxValueX, maxValueY;
         public bool IsSelected { get { return isSelected; } }
 
-        public abstract void Move(int x, int y);
-        public void SetBorders(int rightBorder, int bottomBorder) {
-            maxValueX = rightBorder;
-            maxValueY = bottomBorder;
-            ChangeSize(0);
-            Move(0, 0);
-        }
+        public abstract bool Move(int x, int y, int rightBorder, int bottomBorder);
         public abstract bool isLiesOn(int _x, int _y);
-        public void Select() {
-            isSelected = true;
-        }
-        public void Unselect() {
-            isSelected = false;
-        }
-        public abstract void ChangeSize(int dSize);
+        public abstract void Select();
+        public abstract void Unselect();
+        public abstract bool ChangeSize(int dSize, int rightBorder, int bottomBorder);
         public abstract void ChangeColor(Color color);
         public abstract void Paint(Graphics g);
     }
@@ -37,31 +27,57 @@ namespace Figures {
         internal int size;
         internal Color color;
 
-        public override void Move(int _x, int _y) {
-            x = x + size + _x > maxValueX? maxValueX - size 
-                : x - size + _x < 0 ? size : x + _x;
+        public bool CorrectPosition(int rightBorder, int bottomBorder) {
+            bool isUncorrect = false;
+            isUncorrect = x + size > rightBorder ? true
+                : x - size < 0 ? true : isUncorrect;
+            isUncorrect = y + size > bottomBorder ? true
+                : y - size < 0 ? true : isUncorrect;
 
-            y = y + size + _y > maxValueY ? maxValueY - size
-                : y - size + _y < 0 ? size : y + _y;
-            /*
-            x += _x;
-            if (x + size > maxValueX)
-                x = maxValueX - size;
-            else if (x - size < 0) x = size;
+            x = x + size > rightBorder ? rightBorder - size
+                : x - size < 0 ? size : x;
 
-            y += _y;
-            if (y + size > maxValueY)
-                y = maxValueY - size;
-            else if (y - size < 0) y = size;
-            */
+            y = y + size > bottomBorder ? bottomBorder - size
+                : y - size < 0 ? size : y;
+
+            return isUncorrect;
         }
 
-        public override void ChangeSize(int dSize) {
-            size = size + dSize < 5 ? 5
-                : (size + dSize) * 2 > maxValueX ? maxValueX / 2
-                : (size + dSize) * 2 > maxValueY ? maxValueY / 2 : size + dSize;
+        public override bool Move(int _x, int _y, int rightBorder, int bottomBorder) {
+            x += _x; y += _y;
 
-            Move(0, 0);
+            if (CorrectPosition(rightBorder, bottomBorder))
+                return false;
+            return true;
+        }
+
+        public override bool ChangeSize(int dSize, int rightBorder, int bottomBorder) {
+            size += dSize;
+
+            bool isTooLarge = false;
+            isTooLarge = size < 5 ? true
+                : size * 2 > rightBorder ? true
+                : size * 2 > bottomBorder ? true : isTooLarge;
+
+            bool isUncorrect = false;
+            isUncorrect = x + size > rightBorder ? true
+                : x - size < 0 ? true : isUncorrect;
+            isUncorrect = y + size > bottomBorder ? true
+                : y - size < 0 ? true : isUncorrect;
+
+            if (isTooLarge || isUncorrect) {
+                ChangeSize(-dSize, rightBorder, bottomBorder);
+                return false;
+            }
+            return true;
+        }
+
+        public override void Select() {
+            isSelected = true;
+        }
+
+        public override void Unselect() {
+            isSelected = false;
         }
 
         public override void ChangeColor(Color _color) {
@@ -147,7 +163,6 @@ namespace Figures {
 
     public class Triangle : SingleFigure {
         Point[] points = new Point[3];
-        int dX;
 
         public Triangle() {
             x = y = 25;
@@ -159,7 +174,7 @@ namespace Figures {
         public Triangle(int _x, int _y, int _size, Color _color) {
             x = _x;
             y = _y;
-            size = (int)(1.25f * _size);
+            size = _size;
             calculatePoints();
 
             isSelected = false;
@@ -175,23 +190,24 @@ namespace Figures {
         }
         */
         private void calculatePoints() {
-            dX = (int)Math.Sqrt(0.75f * size * size);
             points[0].X = x;
             points[0].Y = y - size;
-            points[1].X = x + dX;
-            points[1].Y = y + size / 2;
-            points[2].X = x - dX;
-            points[2].Y = y + size / 2;
+            points[1].X = x + size;
+            points[1].Y = y + size;
+            points[2].X = x - size;
+            points[2].Y = y + size;
         }
 
-        public override void Move(int _x, int _y) {
-            x = x + dX + _x > maxValueX ? maxValueX - dX
-                : x - dX + _x < 0 ? dX : x + _x;
-
-            y = y + size / 2 + _y > maxValueY ? maxValueY - size / 2
-                : y - size + _y < 0 ? size : y + _y;
-
+        public override bool Move(int _x, int _y, int rightBorder, int bottomBorder) {
+            bool result = base.Move(_x, _y, rightBorder, bottomBorder);
             calculatePoints();
+            return result;
+        }
+
+        public override bool ChangeSize(int dSize, int rightBorder, int bottomBorder) {
+            bool result = base.ChangeSize(dSize, rightBorder, bottomBorder);
+            calculatePoints();
+            return result;
         }
 
         public override bool isLiesOn(int _x, int _y) {
@@ -199,15 +215,6 @@ namespace Figures {
             int b = (points[1].X - _x) * (points[2].Y - points[1].Y) - (points[2].X - points[1].X) * (points[1].Y - _y);
             int c = (points[2].X - _x) * (points[0].Y - points[2].Y) - (points[0].X - points[2].X) * (points[2].Y - _y);
             return (a >= 0 && b >= 0 && c >= 0) || (a <= 0 && b <= 0 && c <= 0);
-        }
-
-        public override void ChangeSize(int dSize) {
-            size = size + dSize < 5 ? 5
-                : (dSize + dX) * 2 > maxValueX ? 4 * maxValueX / 7
-                : 3 * size / 2 + 2 * dSize > maxValueY ? 2 * maxValueY / 3 : size + dSize;
-
-            calculatePoints();
-            Move(0, 0);
         }
 
         public override void Paint(Graphics g) {
@@ -221,6 +228,95 @@ namespace Figures {
                 p.DashStyle = System.Drawing.Drawing2D.DashStyle.Dash;
             }
             g.DrawPolygon(p, points);
+        }
+    }
+
+    public class GroupFigure : Figure {
+        private Container<Figure> figures;
+        private Iterator<Figure> iter;
+
+        public GroupFigure() {
+            figures = new Container<Figure>();
+            iter = figures.createIterator();
+        }
+
+        public GroupFigure(Container<Figure> container) {
+            figures = container;
+            iter = figures.createIterator();
+            isSelected = true;
+        }
+
+        public Container<Figure> getFigures() {
+            return figures;
+        }
+
+        public override bool Move(int x, int y, int rightBorder, int bottomBorder) {
+            bool success = true;
+            int numOfCorrect = 0;
+            for (iter.first(); !iter.isEOL(); iter.next())
+                if (!iter.getCurrentObject().Move(x, y, rightBorder, bottomBorder)) {
+                    success = false;
+                    numOfCorrect = iter.getPosition();
+                    break;
+                }
+
+            iter.first();
+            if (!success)
+                while (numOfCorrect > 0) {
+                    iter.getCurrentObject().Move(-x, -y, rightBorder, bottomBorder);
+                    iter.next();
+                    --numOfCorrect;
+                }
+            return success;
+        }
+
+        public override bool isLiesOn(int _x, int _y) {
+            for (iter.first(); !iter.isEOL(); iter.next())
+                if (iter.getCurrentObject().isLiesOn(_x, _y))
+                    return true;
+            return false;
+        }
+
+        public override void Select() {
+            isSelected = true;
+            for (iter.first(); !iter.isEOL(); iter.next())
+                iter.getCurrentObject().Select();
+        }
+
+        public override void Unselect() {
+            isSelected = false;
+            for (iter.first(); !iter.isEOL(); iter.next())
+                iter.getCurrentObject().Unselect();
+        }
+
+        public override bool ChangeSize(int dSize, int rightBorder, int bottomBorder) {
+            bool success = true;
+            int numOfCorrect = 0;
+            for (iter.first(); !iter.isEOL(); iter.next())
+                if (!iter.getCurrentObject().ChangeSize(dSize, rightBorder, bottomBorder)) {
+                    success = false;
+                    numOfCorrect = iter.getPosition();
+                    break;
+                }
+
+            iter.first();
+            if (!success)
+                while (numOfCorrect > 0) {
+                    iter.getCurrentObject().ChangeSize(-dSize, rightBorder, bottomBorder);
+                    iter.next();
+                    --numOfCorrect;
+                }
+            return success;
+        }
+
+        public override void ChangeColor(Color color) {
+            for (iter.first(); !iter.isEOL(); iter.next())
+                iter.getCurrentObject().ChangeColor(color);
+        }
+
+        public override void Paint(Graphics g) {
+            for (iter.first(); !iter.isEOL(); iter.next())
+                iter.getCurrentObject().Paint(g);
         }
     }
 }

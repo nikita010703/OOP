@@ -33,6 +33,8 @@
             this.lbCurrentFigure = new System.Windows.Forms.Label();
             this.lbCurrentColor = new System.Windows.Forms.Label();
             this.btnSetColor = new System.Windows.Forms.Button();
+            this.btnSetGroup = new System.Windows.Forms.Button();
+            this.btnDecompose = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.newFirureSize)).BeginInit();
             this.SuspendLayout();
             // 
@@ -141,11 +143,33 @@
             this.btnSetColor.UseVisualStyleBackColor = true;
             this.btnSetColor.Click += new System.EventHandler(this.btnSetColor_Click);
             // 
+            // btnSetGroup
+            // 
+            this.btnSetGroup.Location = new System.Drawing.Point(393, 9);
+            this.btnSetGroup.Name = "btnSetGroup";
+            this.btnSetGroup.Size = new System.Drawing.Size(93, 23);
+            this.btnSetGroup.TabIndex = 19;
+            this.btnSetGroup.Text = "Сгруппировать";
+            this.btnSetGroup.UseVisualStyleBackColor = true;
+            this.btnSetGroup.Click += new System.EventHandler(this.btnSetGroup_Click);
+            // 
+            // btnDecompose
+            // 
+            this.btnDecompose.Location = new System.Drawing.Point(491, 9);
+            this.btnDecompose.Name = "btnDecompose";
+            this.btnDecompose.Size = new System.Drawing.Size(93, 23);
+            this.btnDecompose.TabIndex = 20;
+            this.btnDecompose.Text = "Разгруппировать";
+            this.btnDecompose.UseVisualStyleBackColor = true;
+            this.btnDecompose.Click += new System.EventHandler(this.btnDecompose_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(804, 461);
+            this.Controls.Add(this.btnDecompose);
+            this.Controls.Add(this.btnSetGroup);
             this.Controls.Add(this.btnSetColor);
             this.Controls.Add(this.lbCurrentColor);
             this.Controls.Add(this.lbCurrentFigure);
@@ -177,6 +201,8 @@
         private System.Windows.Forms.Label lbCurrentFigure;
         private System.Windows.Forms.Label lbCurrentColor;
         private System.Windows.Forms.Button btnSetColor;
+        private System.Windows.Forms.Button btnSetGroup;
+        private System.Windows.Forms.Button btnDecompose;
     }
 }
 
