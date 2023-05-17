@@ -233,5 +233,13 @@ namespace Visual_redactor {
             for (k.first(); !k.isEOL(); k.next())
                 figures.pushBack(k.getCurrentObject());
         }
+
+        private void btnSave_Click(object sender, EventArgs e) {
+            if (saveFileDialog.ShowDialog() == DialogResult.Cancel)
+                return;
+
+            string filename = saveFileDialog.FileName;
+            figures.SaveElements(filename);
+        }
     }
 }

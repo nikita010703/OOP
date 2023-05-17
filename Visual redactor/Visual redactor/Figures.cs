@@ -7,9 +7,13 @@ using System.Runtime.Serialization.Formatters;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Save_and_Load;
+using Factory;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.ProgressBar;
+using System.IO;
 
 namespace Figures {
-    public abstract class Figure {
+    public abstract class Figure : ISaveable {
         internal bool isSelected;
         public bool IsSelected { get { return isSelected; } }
 
@@ -20,6 +24,9 @@ namespace Figures {
         public abstract bool ChangeSize(int dSize, int rightBorder, int bottomBorder);
         public abstract void ChangeColor(Color color);
         public abstract void Paint(Graphics g);
+
+        public abstract void Save(StreamWriter file);
+        public abstract void Load(StreamWriter file);
     }
 
     public abstract class SingleFigure : Figure {
@@ -83,6 +90,11 @@ namespace Figures {
         public override void ChangeColor(Color _color) {
             color = _color;
         }
+
+        public override void Save(StreamWriter file) {
+            file.WriteLine(x.ToString() + " " + y.ToString() + " " + size.ToString() + " " +
+                isSelected.ToString() + " " + color.ToString());
+        }
     }
 
     public class CCircle : SingleFigure {
@@ -105,7 +117,7 @@ namespace Figures {
             isSelected = existingCircle.isSelected;
         }
 
-        public override bool isLiesOn(int _x, int _y)  {
+        public override bool isLiesOn(int _x, int _y) {
             return Math.Pow(x - _x, 2) + Math.Pow(y - _y, 2) < Math.Pow(size, 2);
         }
 
@@ -121,6 +133,13 @@ namespace Figures {
             }
             g.DrawEllipse(p, x - size, y - size, 2 * size, 2 * size);
         }
+
+        public override void Save(StreamWriter file) {
+            file.WriteLine("Circle");
+            base.Save(file);
+        }
+
+        public override void Load(StreamWriter file) { }
     }
 
     public class Square : SingleFigure {
@@ -159,6 +178,12 @@ namespace Figures {
             }
             g.DrawRectangle(p, x - size, y - size, 2 * size, 2 * size);
         }
+
+        public override void Save(StreamWriter file) {
+            file.WriteLine("Square");
+            base.Save(file);
+        }
+        public override void Load(StreamWriter file) { }
     }
 
     public class Triangle : SingleFigure {
@@ -229,6 +254,12 @@ namespace Figures {
             }
             g.DrawPolygon(p, points);
         }
+
+        public override void Save(StreamWriter file) {
+            file.WriteLine("Triangle");
+            base.Save(file);
+        }
+        public override void Load(StreamWriter file) { }
     }
 
     public class GroupFigure : Figure {
@@ -317,6 +348,35 @@ namespace Figures {
         public override void Paint(Graphics g) {
             for (iter.first(); !iter.isEOL(); iter.next())
                 iter.getCurrentObject().Paint(g);
+        }
+
+        public override void Save(StreamWriter file) {
+            file.WriteLine("GroupFigure");
+            file.WriteLine(isSelected.ToString());
+            file.WriteLine(figures.Count.ToString());
+            for (iter.first(); !iter.isEOL(); iter.next())
+                iter.getCurrentObject().Save(file);
+        }
+
+        public override void Load(StreamWriter file) { }
+    }
+
+    public class FigureFactory<T> : Factory<T> where T : Figure {
+        public override T CreateObject(string name) {
+            Figure newFig;
+            switch (name) {
+                case "Circle":
+                    newFig = new CCircle(); break;
+                case "Square":
+                    newFig = new Square(); break;
+                case "Triangle":
+                    newFig = new Triangle(); break;
+                case "GroupFigure":
+                    newFig = new GroupFigure(); break;
+                default:
+                    newFig = null; break;
+            }
+            return newFig as T;
         }
     }
 }

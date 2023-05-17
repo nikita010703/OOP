@@ -4,6 +4,10 @@ using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Save_and_Load;
+using Factory;
+using System.IO;
+using Utility;
 
 namespace Container {
     public interface Iterator<T> {
@@ -17,7 +21,7 @@ namespace Container {
         bool isEOL();
     }
 
-    internal class ContainerIterator<T> : Iterator<T> {
+    internal class ContainerIterator<T> : Iterator<T> where T : ISaveable{
         internal int pos;
         internal Container<T> container;
         internal Container<T>.ListNode curNode;
@@ -78,7 +82,7 @@ namespace Container {
         }
     }
 
-    internal class ReverseContainerIterator<T> : Iterator<T> {
+    internal class ReverseContainerIterator<T> : Iterator<T> where T : ISaveable {
         internal int pos;
         internal Container<T> container;
         internal Container<T>.ListNode curNode;
@@ -139,7 +143,7 @@ namespace Container {
         }
     }
 
-    public class Container<T> {
+    public class Container<T> where T : ISaveable {
         internal class ListNode {
             public T data { get; internal set; }
             public ListNode prev { get; internal set; }
@@ -300,5 +304,18 @@ namespace Container {
         public Iterator<T> createReverseIterator() {
             return new ReverseContainerIterator<T>(this);
         }
+
+        public void SaveElements(string filename) {
+            StreamWriter file = new StreamWriter(filename);
+            file.WriteLine("Figures");
+            file.WriteLine(Count.ToString());
+
+            Iterator<T> iter = createIterator();
+            for (iter.first(); !iter.isEOL(); iter.next())
+                iter.getCurrentObject().Save(file);
+
+            file.Close();
+        }
+        public void LoadElements(string filename, Factory<T> factory) { }
     }
 }

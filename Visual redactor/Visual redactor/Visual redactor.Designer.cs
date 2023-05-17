@@ -35,6 +35,9 @@
             this.btnSetColor = new System.Windows.Forms.Button();
             this.btnSetGroup = new System.Windows.Forms.Button();
             this.btnDecompose = new System.Windows.Forms.Button();
+            this.openFileDialog = new System.Windows.Forms.OpenFileDialog();
+            this.saveFileDialog = new System.Windows.Forms.SaveFileDialog();
+            this.btnSave = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.newFirureSize)).BeginInit();
             this.SuspendLayout();
             // 
@@ -74,9 +77,9 @@
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.pnlPaint.BackColor = System.Drawing.SystemColors.ControlLight;
-            this.pnlPaint.Location = new System.Drawing.Point(0, 42);
+            this.pnlPaint.Location = new System.Drawing.Point(0, 92);
             this.pnlPaint.Name = "pnlPaint";
-            this.pnlPaint.Size = new System.Drawing.Size(804, 419);
+            this.pnlPaint.Size = new System.Drawing.Size(804, 369);
             this.pnlPaint.TabIndex = 7;
             this.pnlPaint.TabStop = true;
             this.pnlPaint.Paint += new System.Windows.Forms.PaintEventHandler(this.pnlPaint_Paint);
@@ -163,11 +166,34 @@
             this.btnDecompose.UseVisualStyleBackColor = true;
             this.btnDecompose.Click += new System.EventHandler(this.btnDecompose_Click);
             // 
+            // openFileDialog
+            // 
+            this.openFileDialog.DefaultExt = "(*.txt)|*.txt";
+            this.openFileDialog.FileName = "openFile";
+            this.openFileDialog.Filter = "Текстовые файлы(*.txt)|*.txt";
+            // 
+            // saveFileDialog
+            // 
+            this.saveFileDialog.CreatePrompt = true;
+            this.saveFileDialog.DefaultExt = "(*.txt)|*.txt";
+            this.saveFileDialog.Filter = "Текстовые файлы(*.txt)|*.txt";
+            // 
+            // btnSave
+            // 
+            this.btnSave.Location = new System.Drawing.Point(12, 43);
+            this.btnSave.Name = "btnSave";
+            this.btnSave.Size = new System.Drawing.Size(75, 23);
+            this.btnSave.TabIndex = 21;
+            this.btnSave.Text = "Сохранить";
+            this.btnSave.UseVisualStyleBackColor = true;
+            this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(804, 461);
+            this.Controls.Add(this.btnSave);
             this.Controls.Add(this.btnDecompose);
             this.Controls.Add(this.btnSetGroup);
             this.Controls.Add(this.btnSetColor);
@@ -203,6 +229,9 @@
         private System.Windows.Forms.Button btnSetColor;
         private System.Windows.Forms.Button btnSetGroup;
         private System.Windows.Forms.Button btnDecompose;
+        private System.Windows.Forms.OpenFileDialog openFileDialog;
+        private System.Windows.Forms.SaveFileDialog saveFileDialog;
+        private System.Windows.Forms.Button btnSave;
     }
 }
 
