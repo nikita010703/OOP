@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Xml.Linq;
 using Container;
+using Factory;
 using Figures;
 
 namespace Visual_redactor {
@@ -86,11 +87,10 @@ namespace Visual_redactor {
             if (!isOnCircle) {
                 Figure newFigure;
                 switch(cbChooseFigure.SelectedIndex) {
-                    case 0: newFigure = new CCircle(e.X, e.Y, figureSize, cdChooseColor.Color); break;
-                    case 1: newFigure = new Square(e.X, e.Y, figureSize, cdChooseColor.Color); break;
-                    default: newFigure = new Triangle(e.X, e.Y, figureSize, cdChooseColor.Color); break;
+                    case 0: newFigure = new CCircle(e.X, e.Y, figureSize, true, cdChooseColor.Color); break;
+                    case 1: newFigure = new Square(e.X, e.Y, figureSize, true, cdChooseColor.Color); break;
+                    default: newFigure = new Triangle(e.X, e.Y, figureSize, true, cdChooseColor.Color); break;
                 };
-                newFigure.Select();
                 newFigure.Move(0, 0, pnlPaint.Width, pnlPaint.Height);
                 figures.pushBack(newFigure);
 
@@ -240,6 +240,21 @@ namespace Visual_redactor {
 
             string filename = saveFileDialog.FileName;
             figures.SaveElements(filename);
+        }
+
+        private void btnLoad_Click(object sender, EventArgs e) {
+            if (openFileDialog.ShowDialog() == DialogResult.Cancel)
+                return;
+
+            string filename = openFileDialog.FileName;
+
+            Factory<Figure> factory = new FigureFactory<Figure>();
+            if (!figures.LoadElements(filename, factory)) {
+                MessageBox.Show("Некорректный файл сохранения.");
+                return;
+            }
+
+            pnlPaint.Refresh();
         }
     }
 }

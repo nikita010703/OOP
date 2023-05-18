@@ -50,7 +50,6 @@
     <Compile Include="Factory.cs" />
     <Compile Include="Figures.cs" />
     <Compile Include="Save and load.cs" />
-    <Compile Include="Utility.cs" />
     <Compile Include="Visual redactor.cs">
       <SubType>Form</SubType>
     </Compile>

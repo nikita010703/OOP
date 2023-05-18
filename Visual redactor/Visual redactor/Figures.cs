@@ -26,7 +26,7 @@ namespace Figures {
         public abstract void Paint(Graphics g);
 
         public abstract void Save(StreamWriter file);
-        public abstract void Load(StreamWriter file);
+        public abstract void Load(StreamReader file);
     }
 
     public abstract class SingleFigure : Figure {
@@ -92,8 +92,20 @@ namespace Figures {
         }
 
         public override void Save(StreamWriter file) {
-            file.WriteLine(x.ToString() + " " + y.ToString() + " " + size.ToString() + " " +
-                isSelected.ToString() + " " + color.ToString());
+            file.WriteLine(x.ToString() + " " + y.ToString() + " " + size.ToString() + " " + isSelected.ToString() + " "
+                + color.R.ToString() + " " + color.G.ToString() + " " + color.B.ToString());
+        }
+
+        public override void Load(StreamReader file) {
+            string[] args = file.ReadLine().Split(' ');
+            x = Int32.Parse(args[0]);
+            y = Int32.Parse(args[1]);
+            size = Int32.Parse(args[2]);
+            isSelected = Convert.ToBoolean(args[3]);
+            int red = Int32.Parse(args[4]);
+            int green = Int32.Parse(args[5]);
+            int blue = Int32.Parse(args[6]);
+            color = Color.FromArgb(255, red, green, blue);
         }
     }
 
@@ -103,11 +115,11 @@ namespace Figures {
             size = 25;
             isSelected = false;
         }
-        public CCircle(int _x, int _y, int _size, Color _color) {
+        public CCircle(int _x, int _y, int _size, bool select, Color _color) {
             x = _x;
             y = _y;
             size = _size;
-            isSelected = false;
+            isSelected = select;
             color = _color;
         }
         public CCircle(CCircle existingCircle) {
@@ -138,8 +150,6 @@ namespace Figures {
             file.WriteLine("Circle");
             base.Save(file);
         }
-
-        public override void Load(StreamWriter file) { }
     }
 
     public class Square : SingleFigure {
@@ -148,11 +158,11 @@ namespace Figures {
             size = 25;
             isSelected = false;
         }
-        public Square(int _x, int _y, int _size, Color _color) {
+        public Square(int _x, int _y, int _size, bool select, Color _color) {
             x = _x;
             y = _y;
             size = _size;
-            isSelected = false;
+            isSelected = select;
             color = _color;
         }
         public Square(Square existingSquare) {
@@ -183,7 +193,6 @@ namespace Figures {
             file.WriteLine("Square");
             base.Save(file);
         }
-        public override void Load(StreamWriter file) { }
     }
 
     public class Triangle : SingleFigure {
@@ -196,13 +205,13 @@ namespace Figures {
 
             isSelected = false;
         }
-        public Triangle(int _x, int _y, int _size, Color _color) {
+        public Triangle(int _x, int _y, int _size ,bool select, Color _color) {
             x = _x;
             y = _y;
             size = _size;
             calculatePoints();
 
-            isSelected = false;
+            isSelected = select;
             color = _color;
         }
         /*
@@ -259,7 +268,10 @@ namespace Figures {
             file.WriteLine("Triangle");
             base.Save(file);
         }
-        public override void Load(StreamWriter file) { }
+        public override void Load(StreamReader file) {
+            base.Load(file);
+            calculatePoints();
+        }
     }
 
     public class GroupFigure : Figure {
@@ -358,7 +370,16 @@ namespace Figures {
                 iter.getCurrentObject().Save(file);
         }
 
-        public override void Load(StreamWriter file) { }
+        public override void Load(StreamReader file) {
+            isSelected = Convert.ToBoolean(file.ReadLine());
+            int numOfFigures = Int32.Parse(file.ReadLine());
+            FigureFactory<Figure> factory = new FigureFactory<Figure>();
+            for (int i = 0; i < numOfFigures; ++i) {
+                Figure fig = factory.CreateObject(file.ReadLine());
+                fig.Load(file);
+                figures.pushBack(fig);
+            }
+        }
     }
 
     public class FigureFactory<T> : Factory<T> where T : Figure {
@@ -377,6 +398,10 @@ namespace Figures {
                     newFig = null; break;
             }
             return newFig as T;
+        }
+
+        public override string CreatedObjectsType() {
+            return "Figures";
         }
     }
 }

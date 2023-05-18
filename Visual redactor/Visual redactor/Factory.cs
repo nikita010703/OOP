@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace Factory {
     public abstract class Factory<T> {
-        public abstract T CreateObject(string name);
+        public abstract T CreateObject(string data);
+        public abstract string CreatedObjectsType();
     }
 }

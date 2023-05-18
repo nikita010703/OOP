@@ -7,7 +7,6 @@ using System.Threading.Tasks;
 using Save_and_Load;
 using Factory;
 using System.IO;
-using Utility;
 
 namespace Container {
     public interface Iterator<T> {
@@ -294,6 +293,11 @@ namespace Container {
             --Count;
         }
 
+        public void Clear() {
+            head = null; tail = null;
+            Count = 0;
+        }
+
         private int Size { get { return Count; } }
         private bool isEmpty { get { return Count == 0; } }
 
@@ -307,7 +311,8 @@ namespace Container {
 
         public void SaveElements(string filename) {
             StreamWriter file = new StreamWriter(filename);
-            file.WriteLine("Figures");
+            //file.WriteLine("Figures");
+            file.WriteLine(head.data.GetType().ToString().Split('.')[0]);
             file.WriteLine(Count.ToString());
 
             Iterator<T> iter = createIterator();
@@ -316,6 +321,26 @@ namespace Container {
 
             file.Close();
         }
-        public void LoadElements(string filename, Factory<T> factory) { }
+
+        public bool LoadElements(string filename, Factory<T> factory) {
+            StreamReader file = new StreamReader(filename);
+
+            string type = file.ReadLine();
+            if (type != factory.CreatedObjectsType()) {
+                file.Close();
+                return false;
+            }
+
+            Clear();
+
+            int numOfElems = Int32.Parse(file.ReadLine());
+            for (int i = 0; i < numOfElems; ++i) {
+                T elem = factory.CreateObject(file.ReadLine());
+                elem.Load(file);
+                pushBack(elem);
+            }
+            file.Close();
+            return true;
+        }
     }
 }

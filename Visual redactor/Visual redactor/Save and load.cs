@@ -9,6 +9,6 @@ using System.Threading.Tasks;
 namespace Save_and_Load {
     public interface ISaveable {
         void Save(StreamWriter fs);
-        void Load(StreamWriter fs);
+        void Load(StreamReader fs);
     }
 }
