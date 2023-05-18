@@ -155,6 +155,12 @@ namespace Visual_redactor {
                     }
             }
 
+            if (isPressedCtrl && e.KeyCode == Keys.A) {
+                Iterator<Figure> i = figures.createIterator();
+                for (i.first(); !i.isEOL(); i.next())
+                    i.getCurrentObject().Select();
+            }
+
             if (e.KeyCode == Keys.Delete) {
                 if (figures.Count > 0) {
                     it.last();
@@ -240,6 +246,8 @@ namespace Visual_redactor {
 
             string filename = saveFileDialog.FileName;
             figures.SaveElements(filename);
+
+            pnlPaint.Focus();
         }
 
         private void btnLoad_Click(object sender, EventArgs e) {
@@ -254,7 +262,12 @@ namespace Visual_redactor {
                 return;
             }
 
+            pnlPaint.Focus();
             pnlPaint.Refresh();
+        }
+
+        private void Form1_Load(object sender, EventArgs e) {
+            pnlPaint.Focus();
         }
     }
 }
