@@ -16,6 +16,7 @@ namespace Visual_redactor {
     public partial class Form1 : Form {
         int figureSize = 25;
         bool isPressedCtrl = false;
+        bool isArrowCreatingMode = false;
         int selectedFigures = 1;
         Container<Figure> figures = new Container<Figure>();
         HashSet<Keys> existingCommands = new HashSet<Keys>();
@@ -107,11 +108,42 @@ namespace Visual_redactor {
                 it.getCurrentObject().Paint(g);
         }
 
+        Figure selectedFigure;
         private void pnlPaint_MouseDown(object sender, MouseEventArgs e) {
-            Processingfigures(e);
+            if (!isArrowCreatingMode)
+                Processingfigures(e);
 
+            if (isArrowCreatingMode) {
+                Iterator<Figure> it = figures.createReverseIterator();
+                for (it.first(); !it.isEOL(); it.next())
+                    if (it.getCurrentObject().isLiesOn(e.X, e.Y)) {
+                        selectedFigure = it.getCurrentObject();
+                        break;
+                    }
+            }
             pnlPaint.Focus();
             pnlPaint.Refresh();
+        }
+
+        private void pnlPaint_MouseUp(object sender, MouseEventArgs e) {
+            if (!isArrowCreatingMode)
+                return;
+
+            Iterator<Figure> it = figures.createReverseIterator();
+            for (it.first(); !it.isEOL(); it.next()) {
+                Figure fig = it.getCurrentObject();
+                if (fig.isLiesOn(e.X, e.Y)) {
+                    if (selectedFigure != fig) {
+                        selectedFigure.observable.AddObserver(fig);
+                        //fig.observable.AddObserver(selectedFigure);
+                        fig.observers.AddObservable(selectedFigure);
+                        //selectedFigure.observers.AddObservable(fig);
+                    }
+
+                }
+            }
+            pnlPaint.Refresh();
+
         }
 
         private void pnlPaint_Resize(object sender, EventArgs e) {
@@ -135,6 +167,10 @@ namespace Visual_redactor {
                             int tmp = it.getPosition();
                             it.previous();
                             figures.removeAt(tmp);
+
+                            foreach (Figure obs in fig.observable.observers)
+                                obs.observers.RemoveObservable(fig);
+                            fig.observable.Clear();
                             break;
 
                         case Keys.Subtract:
@@ -267,6 +303,13 @@ namespace Visual_redactor {
         }
 
         private void Form1_Load(object sender, EventArgs e) {
+            pnlPaint.Focus();
+        }
+
+        private void btnCreateArrow_Click(object sender, EventArgs e) {
+            isArrowCreatingMode = !isArrowCreatingMode;
+            btnCreateArrow.BackColor = isArrowCreatingMode ? SystemColors.MenuHighlight : SystemColors.ControlLight;
+
             pnlPaint.Focus();
         }
     }

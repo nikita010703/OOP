@@ -33,6 +33,8 @@ namespace Figures {
 
             if (CorrectPosition(rightBorder, bottomBorder))
                 return false;
+
+            observable.Notify(_x, _y, rightBorder, bottomBorder);
             return true;
         }
 
@@ -84,6 +86,10 @@ namespace Figures {
             int green = Int32.Parse(args[5]);
             int blue = Int32.Parse(args[6]);
             color = Color.FromArgb(255, red, green, blue);
+        }
+
+        public override Point GetCenter() {
+            return new Point(x, y);
         }
     }
 }

@@ -42,6 +42,8 @@ namespace Figures {
                 p.DashStyle = System.Drawing.Drawing2D.DashStyle.Dash;
             }
             g.DrawEllipse(p, x - size, y - size, 2 * size, 2 * size);
+
+            base.Paint(g);
         }
 
         public override void Save(StreamWriter file) {

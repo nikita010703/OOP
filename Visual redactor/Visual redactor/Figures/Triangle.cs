@@ -75,6 +75,8 @@ namespace Figures {
                 p.DashStyle = System.Drawing.Drawing2D.DashStyle.Dash;
             }
             g.DrawPolygon(p, points);
+
+            base.Paint(g);
         }
 
         public override void Save(StreamWriter file) {

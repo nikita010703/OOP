@@ -94,6 +94,8 @@ namespace Figures {
         public override void Paint(Graphics g) {
             for (iter.first(); !iter.isEOL(); iter.next())
                 iter.getCurrentObject().Paint(g);
+
+            base.Paint(g);
         }
 
         public override void Save(StreamWriter file) {
@@ -113,6 +115,18 @@ namespace Figures {
                 fig.Load(file);
                 figures.pushBack(fig);
             }
+        }
+
+        public override Point GetCenter() {
+            int x = 0, y = 0;
+
+            for (iter.first(); !iter.isEOL(); iter.next()) {
+                x += iter.getCurrentObject().GetCenter().X;
+                y += iter.getCurrentObject().GetCenter().Y;
+            }
+
+            x /= figures.Count; y /= figures.Count;
+            return new Point(x, y);
         }
     }
 }

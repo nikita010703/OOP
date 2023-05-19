@@ -55,6 +55,7 @@
     <Compile Include="Figures\SingleFigure.cs" />
     <Compile Include="Figures\Square.cs" />
     <Compile Include="Figures\Triangle.cs" />
+    <Compile Include="Observers.cs" />
     <Compile Include="Save and load.cs" />
     <Compile Include="Visual redactor.cs">
       <SubType>Form</SubType>
