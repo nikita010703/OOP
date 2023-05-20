@@ -335,13 +335,17 @@ namespace Visual_redactor {
             if (!isPressedCtrl)
                 treeViewHandler.Reset();
             e.Node.Checked = !e.Node.Checked;
-            
+
             treeViewHandler.Notify();
             pnlPaint.Refresh();
         }
 
         private void treeView_PreviewKeyDown(object sender, PreviewKeyDownEventArgs e) {
             pnlPaint_PreviewKeyDown(sender, e);
+        }
+
+        private void treeView_AfterSelect(object sender, TreeViewEventArgs e) {
+            e.Node.TreeView.SelectedNode = null;
         }
     }
 }

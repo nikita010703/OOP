@@ -278,6 +278,7 @@
             this.treeView.Size = new System.Drawing.Size(199, 376);
             this.treeView.TabIndex = 24;
             this.treeView.TabStop = false;
+            this.treeView.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.treeView_AfterSelect);
             this.treeView.NodeMouseClick += new System.Windows.Forms.TreeNodeMouseClickEventHandler(this.treeView_NodeMouseClick);
             this.treeView.PreviewKeyDown += new System.Windows.Forms.PreviewKeyDownEventHandler(this.treeView_PreviewKeyDown);
             // 
