@@ -50,6 +50,7 @@
     <Compile Include="Factory.cs" />
     <Compile Include="Figures\Circle.cs" />
     <Compile Include="Figures\Figure.cs" />
+    <Compile Include="Figures\FigureContainer.cs" />
     <Compile Include="Figures\FigureFactory.cs" />
     <Compile Include="Figures\GroupFigure.cs" />
     <Compile Include="Figures\SingleFigure.cs" />
@@ -57,6 +58,7 @@
     <Compile Include="Figures\Triangle.cs" />
     <Compile Include="Observers.cs" />
     <Compile Include="Save and load.cs" />
+    <Compile Include="TreeViewHandler.cs" />
     <Compile Include="Visual redactor.cs">
       <SubType>Form</SubType>
     </Compile>

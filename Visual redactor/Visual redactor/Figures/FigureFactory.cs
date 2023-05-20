@@ -11,7 +11,7 @@ namespace Figures {
             Figure newFig;
             switch (name) {
                 case "Circle":
-                    newFig = new CCircle(); break;
+                    newFig = new Circle(); break;
                 case "Square":
                     newFig = new Square(); break;
                 case "Triangle":

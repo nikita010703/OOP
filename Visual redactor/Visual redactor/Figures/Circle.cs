@@ -7,20 +7,20 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace Figures {
-    public class CCircle : SingleFigure {
-        public CCircle() {
+    public class Circle : SingleFigure {
+        public Circle() {
             x = y = 0;
             size = 25;
             isSelected = false;
         }
-        public CCircle(int _x, int _y, int _size, bool select, Color _color) {
+        public Circle(int _x, int _y, int _size, bool select, Color _color) {
             x = _x;
             y = _y;
             size = _size;
             isSelected = select;
             color = _color;
         }
-        public CCircle(CCircle existingCircle) {
+        public Circle(Circle existingCircle) {
             x = existingCircle.x;
             y = existingCircle.y;
             size = existingCircle.size;

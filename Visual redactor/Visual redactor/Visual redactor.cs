@@ -11,6 +11,7 @@ using System.Xml.Linq;
 using Container;
 using Factory;
 using Figures;
+using Visual_redactor.Figures;
 
 namespace Visual_redactor {
     public partial class Form1 : Form {
@@ -18,11 +19,20 @@ namespace Visual_redactor {
         bool isPressedCtrl = false;
         bool isArrowCreatingMode = false;
         int selectedFigures = 1;
-        Container<Figure> figures = new Container<Figure>();
-        HashSet<Keys> existingCommands = new HashSet<Keys>();
+        FigureContainer<Figure> figures;
+        TreeViewHandler treeViewHandler;
+        HashSet<Keys> existingCommands;
 
         public Form1() {
             InitializeComponent();
+            figures = new FigureContainer<Figure>();
+            treeViewHandler = new TreeViewHandler(treeView);
+            existingCommands = new HashSet<Keys>();
+
+            figures.AddObserver(treeViewHandler);
+            treeViewHandler.AddObserver(figures);
+
+            treeView.ImageList = figureImages;
 
             cbChooseFigure.SelectedIndex = 0;
             cdChooseColor= new ColorDialog();
@@ -88,7 +98,7 @@ namespace Visual_redactor {
             if (!isOnCircle) {
                 Figure newFigure;
                 switch(cbChooseFigure.SelectedIndex) {
-                    case 0: newFigure = new CCircle(e.X, e.Y, figureSize, true, cdChooseColor.Color); break;
+                    case 0: newFigure = new Circle(e.X, e.Y, figureSize, true, cdChooseColor.Color); break;
                     case 1: newFigure = new Square(e.X, e.Y, figureSize, true, cdChooseColor.Color); break;
                     default: newFigure = new Triangle(e.X, e.Y, figureSize, true, cdChooseColor.Color); break;
                 };
@@ -110,8 +120,10 @@ namespace Visual_redactor {
 
         Figure selectedFigure;
         private void pnlPaint_MouseDown(object sender, MouseEventArgs e) {
-            if (!isArrowCreatingMode)
+            if (!isArrowCreatingMode) {
                 Processingfigures(e);
+                figures.Notify();
+            }
 
             if (isArrowCreatingMode) {
                 Iterator<Figure> it = figures.createReverseIterator();
@@ -156,17 +168,18 @@ namespace Visual_redactor {
 
         private void pnlPaint_PreviewKeyDown(object sender, PreviewKeyDownEventArgs e) {
             if (!existingCommands.Contains(e.KeyCode))
-                return; 
+                return;
 
+            int deletedIndex = 0;
             Iterator<Figure> it = figures.createIterator();
             for (it.first(); !it.isEOL(); it.next()) {
                 Figure fig = it.getCurrentObject();
                 if (fig.IsSelected)
                     switch (e.KeyCode) {
                         case Keys.Delete:
-                            int tmp = it.getPosition();
+                            deletedIndex = it.getPosition();
                             it.previous();
-                            figures.removeAt(tmp);
+                            figures.removeAt(deletedIndex);
 
                             foreach (Figure obs in fig.observable.observers)
                                 obs.observers.RemoveObservable(fig);
@@ -199,12 +212,14 @@ namespace Visual_redactor {
 
             if (e.KeyCode == Keys.Delete) {
                 if (figures.Count > 0) {
-                    it.last();
-                    it.getCurrentObject().Select();
+                    figures.getValueAt(deletedIndex).Select();
+                    //it.getCurrentObject().Select();
                     selectedFigures = 1;
                 }
                 else
                     selectedFigures = 0;
+
+                figures.Notify();
             }
 
             pnlPaint.Refresh();
@@ -237,16 +252,19 @@ namespace Visual_redactor {
             Container<Figure> container = new Container<Figure>();
             Iterator<Figure> it = figures.createIterator();
 
-            for (it.first(); !it.isEOL(); it.next()) {
-                Figure fig = it.getCurrentObject();
-                if (fig.IsSelected) {
-                    container.pushBack(fig);
+            for (it.first(); !it.isEOL(); it.next())
+                if (it.getCurrentObject().IsSelected)
+                    container.pushBack(it.getCurrentObject());
 
+            if (container.Count == 1)
+                return;
+
+            for (it.first(); !it.isEOL(); it.next())
+                if (it.getCurrentObject().IsSelected) {
                     int tmp = it.getPosition();
                     it.previous();
                     figures.removeAt(tmp);
                 }
-            }
 
             figures.pushBack(new GroupFigure(container));
             pnlPaint.Focus();
@@ -311,6 +329,19 @@ namespace Visual_redactor {
             btnCreateArrow.BackColor = isArrowCreatingMode ? SystemColors.MenuHighlight : SystemColors.ControlLight;
 
             pnlPaint.Focus();
+        }
+
+        private void treeView_NodeMouseClick(object sender, TreeNodeMouseClickEventArgs e) {
+            if (!isPressedCtrl)
+                treeViewHandler.Reset();
+            e.Node.Checked = !e.Node.Checked;
+            
+            treeViewHandler.Notify();
+            pnlPaint.Refresh();
+        }
+
+        private void treeView_PreviewKeyDown(object sender, PreviewKeyDownEventArgs e) {
+            pnlPaint_PreviewKeyDown(sender, e);
         }
     }
 }

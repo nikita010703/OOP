@@ -180,7 +180,7 @@ namespace Container {
             }
         }
 
-        public void pushBack(T data) {
+        public virtual void pushBack(T data) {
             ListNode node = new ListNode(data);
 
             if (tail == null)
@@ -193,7 +193,7 @@ namespace Container {
             Count++;
         }
 
-        public void pushFront(T data) {
+        public virtual void pushFront(T data) {
             ListNode node = new ListNode(data);
 
             if (head == null)
@@ -206,7 +206,7 @@ namespace Container {
             Count++;
         }
 
-        public void insertAfter(T value, int index) {
+        public virtual void insertAfter(T value, int index) {
             if (head == null) {
                 head = tail = new ListNode(value);
 
@@ -230,7 +230,7 @@ namespace Container {
             }
         }
 
-        public T popBack() {
+        public virtual T popBack() {
             if (tail != null) {
                 T tmp = tail.data;
                 if (tail.prev != null) {
@@ -246,7 +246,7 @@ namespace Container {
             return default(T);
         }
 
-        public T popFront() {
+        public virtual T popFront() {
             if (head != null) {
                 T tmp = head.data;
                 if (head.next != null) {
@@ -262,7 +262,7 @@ namespace Container {
             return default(T);
         }
 
-        public void removeAt(int index) {
+        public virtual void removeAt(int index) {
             if (Count == 0)
                 return;
 
@@ -293,9 +293,13 @@ namespace Container {
             --Count;
         }
 
-        public void Clear() {
+        public virtual void Clear() {
             head = null; tail = null;
             Count = 0;
+        }
+
+        public T getValueAt(int index) {
+            return getNodeAt(index).data;
         }
 
         private int Size { get { return Count; } }

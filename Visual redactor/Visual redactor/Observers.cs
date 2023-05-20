@@ -8,6 +8,10 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Xml.Linq;
+using System.ComponentModel;
+using Visual_redactor.Figures;
+using Container;
+using System.Threading;
 
 namespace Figures {
     public class Observer {

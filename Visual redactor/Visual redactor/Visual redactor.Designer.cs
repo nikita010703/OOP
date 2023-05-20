@@ -38,6 +38,7 @@
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
+            this.btnCreateArrow = new System.Windows.Forms.Button();
             this.btnSetGroup = new System.Windows.Forms.Button();
             this.groupBox4 = new System.Windows.Forms.GroupBox();
             this.btnSave = new System.Windows.Forms.Button();
@@ -45,7 +46,7 @@
             this.toolTip = new System.Windows.Forms.ToolTip(this.components);
             this.treeView = new System.Windows.Forms.TreeView();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
-            this.btnCreateArrow = new System.Windows.Forms.Button();
+            this.figureImages = new System.Windows.Forms.ImageList(this.components);
             ((System.ComponentModel.ISupportInitialize)(this.newFirureSize)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pnlPaint)).BeginInit();
             this.groupBox1.SuspendLayout();
@@ -206,6 +207,18 @@
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "Группировка";
             // 
+            // btnCreateArrow
+            // 
+            this.btnCreateArrow.ForeColor = System.Drawing.SystemColors.ControlText;
+            this.btnCreateArrow.Image = ((System.Drawing.Image)(resources.GetObject("btnCreateArrow.Image")));
+            this.btnCreateArrow.Location = new System.Drawing.Point(96, 19);
+            this.btnCreateArrow.Name = "btnCreateArrow";
+            this.btnCreateArrow.Size = new System.Drawing.Size(39, 39);
+            this.btnCreateArrow.TabIndex = 6;
+            this.toolTip.SetToolTip(this.btnCreateArrow, "Режим создания стрелок");
+            this.btnCreateArrow.UseVisualStyleBackColor = true;
+            this.btnCreateArrow.Click += new System.EventHandler(this.btnCreateArrow_Click);
+            // 
             // btnSetGroup
             // 
             this.btnSetGroup.Image = ((System.Drawing.Image)(resources.GetObject("btnSetGroup.Image")));
@@ -258,10 +271,15 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.treeView.BackColor = System.Drawing.SystemColors.ControlLight;
             this.treeView.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.treeView.FullRowSelect = true;
             this.treeView.Location = new System.Drawing.Point(2, 0);
             this.treeView.Name = "treeView";
+            this.treeView.ShowPlusMinus = false;
             this.treeView.Size = new System.Drawing.Size(199, 376);
             this.treeView.TabIndex = 24;
+            this.treeView.TabStop = false;
+            this.treeView.NodeMouseClick += new System.Windows.Forms.TreeNodeMouseClickEventHandler(this.treeView_NodeMouseClick);
+            this.treeView.PreviewKeyDown += new System.Windows.Forms.PreviewKeyDownEventHandler(this.treeView_PreviewKeyDown);
             // 
             // splitContainer1
             // 
@@ -283,17 +301,14 @@
             this.splitContainer1.SplitterDistance = 781;
             this.splitContainer1.TabIndex = 25;
             // 
-            // btnCreateArrow
+            // figureImages
             // 
-            this.btnCreateArrow.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.btnCreateArrow.Image = ((System.Drawing.Image)(resources.GetObject("btnCreateArrow.Image")));
-            this.btnCreateArrow.Location = new System.Drawing.Point(96, 19);
-            this.btnCreateArrow.Name = "btnCreateArrow";
-            this.btnCreateArrow.Size = new System.Drawing.Size(39, 39);
-            this.btnCreateArrow.TabIndex = 6;
-            this.toolTip.SetToolTip(this.btnCreateArrow, "Режим создания стрелок");
-            this.btnCreateArrow.UseVisualStyleBackColor = true;
-            this.btnCreateArrow.Click += new System.EventHandler(this.btnCreateArrow_Click);
+            this.figureImages.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("figureImages.ImageStream")));
+            this.figureImages.TransparentColor = System.Drawing.Color.Transparent;
+            this.figureImages.Images.SetKeyName(0, "Circle.png");
+            this.figureImages.Images.SetKeyName(1, "Square.png");
+            this.figureImages.Images.SetKeyName(2, "Triangle.png");
+            this.figureImages.Images.SetKeyName(3, "Group.png");
             // 
             // Form1
             // 
@@ -350,6 +365,7 @@
         private System.Windows.Forms.TreeView treeView;
         private System.Windows.Forms.SplitContainer splitContainer1;
         private System.Windows.Forms.Button btnCreateArrow;
+        private System.Windows.Forms.ImageList figureImages;
     }
 }
 
